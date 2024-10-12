@@ -1,0 +1,52 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.3.1'
+	id 'io.spring.dependency-management' version '1.1.5'
+}
+
+group = 'com.linzi'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(17)
+	}
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-configuration-processor'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'com.squareup.okhttp3:okhttp'
+	implementation 'org.projectlombok:lombok'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	implementation group: 'cn.hutool', name: 'hutool-crypto', version: '5.8.28'
+	implementation group: 'cn.hutool', name: 'hutool-json', version: '5.8.28'
+	implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.12.0'
+	implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.14.0'
+	implementation group: 'net.sourceforge.tess4j', name: 'tess4j', version: '5.12.0'
+	implementation group: 'com.github.xiaoymin', name: 'knife4j-openapi3-jakarta-spring-boot-starter', version: '4.5.0'
+	implementation group: 'cn.dev33', name: 'sa-token-spring-boot3-starter', version: '1.38.0'
+	implementation group: 'org.bouncycastle', name: 'bcprov-jdk18on', version: '1.78.1'
+	implementation group: 'net.coobird',name:'thumbnailator',version: '0.4.20'
+	implementation group: 'com.google.zxing', name: 'core', version: '3.5.3'
+	implementation group: 'com.google.zxing', name: 'javase', version: '3.5.3'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
