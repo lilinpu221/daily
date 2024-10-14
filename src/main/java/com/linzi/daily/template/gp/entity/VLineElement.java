@@ -6,20 +6,18 @@ import com.linzi.daily.template.gp.enums.Element;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.Objects;
 
 @Getter
 @Setter
-public class LineElement extends BaseElement{
+public class VLineElement extends BaseElement{
 
     private Float borderWidth = 2.0f;
     private Border borderType = Border.SOLID;
 
-    public LineElement(){
+    public VLineElement(){
         setType(Element.LINE);
     }
 
@@ -39,10 +37,10 @@ public class LineElement extends BaseElement{
         g2d.setBackground(Color.WHITE);
         g2d.setColor(Color.BLACK);
         g2d.clearRect(0, 0, getWidth(), getHeight());
-        int x2 = getWidth();
-        int y2= 0;
-        //横线线宽=高度
-        int borderWidth = getHeight();
+        int x2 = 0;
+        int y2 = getHeight();
+        //竖线线宽等于宽度
+        int borderWidth = getWidth();
         if (Objects.requireNonNull(borderType) == Border.DOT) {
             //点虚线
             g2d.setStroke(new BasicStroke(borderWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{borderWidth, borderWidth*2}, 0));

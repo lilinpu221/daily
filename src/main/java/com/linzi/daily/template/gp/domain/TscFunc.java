@@ -105,6 +105,15 @@ public class TscFunc extends AbstractLabelTemplate {
     }
 
     @Override
+    protected String handleVLineElement(VLineElement vLineElement) {
+        if(vLineElement.needToImg()){
+            return getImage(vLineElement);
+        }else{
+            return parseVLineElement(vLineElement);
+        }
+    }
+
+    @Override
     protected String handleImageElement(ImageElement element) {
         BufferedImage bi;
         if(element.getImgType()== ImageType.LOCAL){
@@ -179,6 +188,10 @@ public class TscFunc extends AbstractLabelTemplate {
     }
 
     private String parseLineElement(LineElement element){
+        return HexUtil.encodeHexStr("BAR "+element.getX()+","+element.getY()+","+element.getWidth()+","+element.getHeight()+WIN_LINE_END,GB18030);
+    }
+
+    private String parseVLineElement(VLineElement element){
         return HexUtil.encodeHexStr("BAR "+element.getX()+","+element.getY()+","+element.getWidth()+","+element.getHeight()+WIN_LINE_END,GB18030);
     }
 

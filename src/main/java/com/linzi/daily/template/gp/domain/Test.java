@@ -46,7 +46,7 @@ public class Test {
         FileUtil.del("D:\\hex.txt");
         FileUtil.appendString(labelStr, FileUtil.file("D:\\hex.txt"), "UTF-8");
         GpApiUtils apiUtils = new GpApiUtils();
-        apiUtils.sendMsg("00596456348920684","3","1",labelStr);
-        apiUtils.sendMsg("dmemrzw423t","3","1",labelStr);
+        apiUtils.sendMsg("00596456348920684","TSPL","3","1",labelStr);
+        apiUtils.sendMsg("dmemrzw423t","TSPL","3","1",labelStr);
     }
 }

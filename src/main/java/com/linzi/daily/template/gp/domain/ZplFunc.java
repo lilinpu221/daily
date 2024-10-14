@@ -80,6 +80,11 @@ public class ZplFunc extends AbstractLabelTemplate {
     }
 
     @Override
+    protected String handleVLineElement(VLineElement vLineElement) {
+        return null;
+    }
+
+    @Override
     protected String handleImageElement(ImageElement element) {
         BufferedImage bi;
         if(element.getImgType()== ImageType.LOCAL){

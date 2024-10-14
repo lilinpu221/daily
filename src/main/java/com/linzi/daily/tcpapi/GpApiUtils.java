@@ -41,7 +41,7 @@ public class GpApiUtils {
      * a7b3d733c81a44ba8349bc4048829f51
      * SCF9K7SS
      */
-    private static final String apiUrl = "http://api.poscom.cn/apisc";
+    private static final String apiUrl = "http://apitest.poscom.cn/apisc";
     private static final String devKey = "847682168B07B9A14405699157829243";
     private static final String devSecret = "P1B9AZGFHXRSI5CS9EBRMEDM8S64C0QZ";
 
@@ -65,7 +65,7 @@ public class GpApiUtils {
         System.out.println("==response：" + reps);
     }
 
-    public void sendMsg(String deviceCode,String mode,String charset,String content) throws IOException {
+    public void sendMsg(String deviceCode,String cmdType,String mode,String charset,String content) throws IOException {
         String reqTime = String.valueOf(System.currentTimeMillis());
         String msgNo = "123456789";
         String reprint = "1";
@@ -91,6 +91,7 @@ public class GpApiUtils {
                 .add("msgNo", msgNo)
                 .add("charset", charset)
                 .add("reprint", reprint)
+                  .add("cmdType", cmdType)
                 .build();
         String reps = OkHttpUtil.formPost(apiUrl + "/sendMsg", requestBody).body().string();
         System.out.println("==response：" + reps);

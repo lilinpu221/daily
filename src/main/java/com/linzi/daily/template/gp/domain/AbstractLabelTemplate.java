@@ -52,6 +52,7 @@ public abstract class AbstractLabelTemplate {
                 case QRCODE -> template.append(handleQrCodeElement((QrCodeElement) element));
                 case SHAPE -> template.append(handleShapeElement((ShapeElement) element));
                 case LINE -> template.append(handleLineElement((LineElement) element));
+                case VLINE -> template.append(handleVLineElement((VLineElement) element));
                 case IMAGE -> template.append(handleImageElement((ImageElement) element));
                 default -> {}
             }
@@ -73,6 +74,8 @@ public abstract class AbstractLabelTemplate {
     protected abstract String handleShapeElement(ShapeElement shapeElement);
 
     protected abstract String handleLineElement(LineElement lineElement);
+
+    protected abstract String handleVLineElement(VLineElement vLineElement);
 
     protected abstract String handleImageElement(ImageElement imageElement);
 
