@@ -18,7 +18,7 @@ public class VLineElement extends BaseElement{
     private Border borderType = Border.SOLID;
 
     public VLineElement(){
-        setType(Element.LINE);
+        setType(Element.VLINE);
     }
 
     @Override

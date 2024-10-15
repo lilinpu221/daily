@@ -179,7 +179,7 @@ public class TscFunc extends AbstractLabelTemplate {
     }
 
     private String parseQrCodeElement(QrCodeElement element){
-        return HexUtil.encodeHexStr("QRCODE "+element.getX()+","+element.getY()+","+element.getLevel().name()+","+element.getWidth()+",A,0,\""+element.getValue()+"\""+WIN_LINE_END,GB18030);
+        return HexUtil.encodeHexStr("QRCODE "+element.getX()+","+element.getY()+","+element.getLevel().name()+","+element.getCellWidth()+",A,0,\""+element.getValue()+"\""+WIN_LINE_END,GB18030);
     }
 
     private String parseShapeElement(ShapeElement element){

@@ -90,8 +90,7 @@ public class GpApiUtils {
                 .add("msgDetail", content)
                 .add("msgNo", msgNo)
                 .add("charset", charset)
-                .add("reprint", reprint)
-                  .add("cmdType", cmdType)
+                .add("reprint", reprint).add("cmdType", cmdType)
                 .build();
         String reps = OkHttpUtil.formPost(apiUrl + "/sendMsg", requestBody).body().string();
         System.out.println("==response：" + reps);

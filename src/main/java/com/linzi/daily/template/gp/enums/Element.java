@@ -1,7 +1,5 @@
 package com.linzi.daily.template.gp.enums;
 
-import java.util.Arrays;
-
 public enum Element {
     /**
      * 元素类型

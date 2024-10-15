@@ -15,6 +15,8 @@ import java.awt.image.BufferedImage;
 @Setter
 public class QrCodeElement extends BaseElement{
 
+    private Integer cellWidth = 2;
+
     private ErrorCorrection level = ErrorCorrection.M;
 
     public QrCodeElement(){

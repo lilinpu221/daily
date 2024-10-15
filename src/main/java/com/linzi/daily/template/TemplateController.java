@@ -26,6 +26,8 @@ public class TemplateController {
 
     @PostMapping("/gp/testTsc")
     public String gpTestTsc(@RequestBody String json) throws IOException {
+        System.out.println("===请求json===");
+        System.out.println(json);
         JSONObject jsonObj = new JSONObject(json);
         JSONArray layerArray = jsonObj.getJSONArray("layer");
         jsonObj.remove("layer");
@@ -39,6 +41,7 @@ public class TemplateController {
                 case QRCODE -> layerList.add(JSONUtil.toBean(layerObj, QrCodeElement.class));
                 case SHAPE -> layerList.add(JSONUtil.toBean(layerObj, ShapeElement.class));
                 case LINE -> layerList.add(JSONUtil.toBean(layerObj, LineElement.class));
+                case VLINE -> layerList.add(JSONUtil.toBean(layerObj, VLineElement.class));
                 case IMAGE -> layerList.add(JSONUtil.toBean(layerObj, ImageElement.class));
                 default -> {}
             }
@@ -54,6 +57,7 @@ public class TemplateController {
         System.out.println("===十六进制打印数据===");
         FileUtil.del("D:\\hex.txt");
         FileUtil.appendString(labelStr, FileUtil.file("D:\\hex.txt"), "UTF-8");
+        System.out.println("===发送打印数据===");
         GpApiUtils apiUtils = new GpApiUtils();
         //apiUtils.sendMsg("00596456348920684","3","1",labelStr);
         apiUtils.sendMsg("dmemrzwtmy7","TSPL","3","1",labelStr);
