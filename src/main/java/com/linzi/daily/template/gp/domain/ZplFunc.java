@@ -7,6 +7,7 @@ import com.linzi.daily.template.gp.entity.*;
 import com.linzi.daily.template.gp.enums.*;
 import net.coobird.thumbnailator.Thumbnails;
 
+import java.awt.datatransfer.FlavorEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
@@ -18,6 +19,7 @@ import java.util.List;
 public class ZplFunc extends AbstractLabelTemplate {
 
     private static final String WIN_LINE_END = "\n";
+    private static final int IMAGE_THRESHOLD = 135;
     public ZplFunc(Layout layout) {
         super(layout);
     }
@@ -38,7 +40,7 @@ public class ZplFunc extends AbstractLabelTemplate {
                 "^MM"+(this.getLayout().getTear()?"T":"P")+
                 "^MT"+(this.getLayout().getMode()== Method.THERMAL?"D":"T")+
                 "^MN"+getPaperType(this.getLayout().getPaperType())+
-                "^LT"+this.getLayout().getShift();
+                "^LT"+this.getLayout().getShift()+ WIN_LINE_END;
     }
 
     @Override
@@ -46,6 +48,9 @@ public class ZplFunc extends AbstractLabelTemplate {
         if(textElement.needToImg()){
             return getImage(textElement);
         }else{
+            //矢量字体字号转像素比
+            int factFontSize = Float.valueOf(textElement.getFontSize()*Tools.VECTOR_FONT_RATE).intValue();
+            textElement.setFontSize(factFontSize);
             List<String> lineList = textElement.textWrap();
             return parseFont(textElement,lineList);
         }
@@ -81,15 +86,22 @@ public class ZplFunc extends AbstractLabelTemplate {
 
     @Override
     protected String handleVLineElement(VLineElement vLineElement) {
-        return null;
+        if(vLineElement.needToImg()){
+            return getImage(vLineElement);
+        }else{
+            return parseVLineElement(vLineElement);
+        }
     }
 
     @Override
     protected String handleImageElement(ImageElement element) {
         BufferedImage bi;
         if(element.getImgType()== ImageType.LOCAL){
+            //去除base64前缀
+            String base64 = element.getValue().substring(element.getValue().indexOf(Tools.BASE64_PREFIX)+7);
             //BASE64图片数据
-            bi = ImgUtil.toImage(element.getValue());
+            bi = ImgUtil.toImage(base64);
+
         }else{
             try {
                 //URL转图片
@@ -98,11 +110,17 @@ public class ZplFunc extends AbstractLabelTemplate {
                 return CharSequenceUtil.EMPTY;
             }
         }
+        try {
+            //图片按实际大小缩放
+            bi = Thumbnails.of(bi).forceSize(element.getWidth(),element.getHeight()).asBufferedImage();
+        } catch (IOException e) {
+            return CharSequenceUtil.EMPTY;
+        }
         int width = bi.getWidth();
         int height = bi.getHeight();
         int wModByte = (width%8)==0 ? 0 : 8-(width%8);
         int wPrintByte = (width+wModByte)/8;
-        String imgHex = Tools.imgToBitmapHex(bi,0,1);
+        String imgHex = Tools.imgToBitmapHex(bi,IMAGE_THRESHOLD,0,1);
         return "~DGGRAPHIC1," + imgHex.length() / 2 + "," + wPrintByte + "," + Tools.zebraCompress(imgHex) + WIN_LINE_END +
                 "^FO" + element.getX() + "," + element.getY() + "^XGGRAPHIC1"+WIN_LINE_END;
     }
@@ -134,39 +152,45 @@ public class ZplFunc extends AbstractLabelTemplate {
                 //最后一行，计算水平对齐的起始坐标
                 x = Tools.textHorizontal(x,element.getWidth(),lineText,fontWidth,element.getTextAlign());
             }
+            textBuilder.append("^FW"+getRevolve(element.getRotation())).append(WIN_LINE_END);
             textBuilder.append("^FO").append(x).append(",").append(y).append("^AA,")
-                    .append(getRevolve(element.getRotation())).append(fontWidth).append(",").append(fontHight)
+                    .append(fontWidth).append(",").append(fontHight)
                     .append("^FD").append(lineText).append("^FS").append(WIN_LINE_END);
             if (element.getFontBold()) {
                 //加粗处理
                 textBuilder.append("^FO").append(x-1).append(",").append(y-1).append("^AA,")
-                        .append(getRevolve(element.getRotation())).append(fontWidth).append(",").append(fontHight)
+                        .append(fontWidth).append(",").append(fontHight)
                         .append("^FD").append(lineText).append("^FS").append(WIN_LINE_END);
                 textBuilder.append("^FO").append(x+1).append(",").append(y+1).append("^AA,")
-                        .append(getRevolve(element.getRotation())).append(fontWidth).append(",").append(fontHight)
+                        .append(fontWidth).append(",").append(fontHight)
                         .append("^FD").append(lineText).append("^FS").append(WIN_LINE_END);
             }
-            y = y+fontHight;
+            switch (element.getRotation()){
+                case 90 -> x = x-fontWidth;
+                case 180 -> y = y-fontHight;
+                case 270 -> x = x+fontWidth;
+                default -> y = y+fontHight;
+            }
         }
         return textBuilder.toString();
     }
 
     private String parseBarCodeElement(BarCodeElement element,String value){
-        String formatStr = "^FO"+element.getX()+","+element.getY();
+        String formatStr = "^FW"+getRevolve(element.getRotation())+WIN_LINE_END+"^FO"+element.getX()+","+element.getY();
         if(element.getBarformat()==BarCodeFormat.ADAPT){
             BarCodeFormat adaptFormate = element.getBarformat().adaptBarType(value);
             element.setBarformat(adaptFormate);
         }
         switch (element.getBarformat()){
-            case CODE39 -> formatStr+="^B3"+getRevolve(element.getRotation())+",N,"+element.getHeight()+","
+            case CODE39 -> formatStr+="^B3"+",N,"+element.getHeight()+","
                     +(element.getBardisplay()>0?"Y":"N")+","+(element.getBardisplay()>1?"Y":"N");
-            case EAN13 -> formatStr+="^BE"+getRevolve(element.getRotation())+","+element.getHeight()+","
+            case EAN13 -> formatStr+="^BE"+","+element.getHeight()+","
                     +(element.getBardisplay()>0?"Y":"N")+","+(element.getBardisplay()>1?"Y":"N");
-            case EAN8 -> formatStr+="^B8"+getRevolve(element.getRotation())+","+element.getHeight()+","
+            case EAN8 -> formatStr+="^B8"+","+element.getHeight()+","
                     +(element.getBardisplay()>0?"Y":"N")+","+(element.getBardisplay()>1?"Y":"N");
-            case UPCA -> formatStr+="^BU"+getRevolve(element.getRotation())+","+element.getHeight()+","
+            case UPC -> formatStr+="^BU"+","+element.getHeight()+","
                     +(element.getBardisplay()>0?"Y":"N")+","+(element.getBardisplay()>1?"Y":"N")+",N";
-            default -> formatStr+="^BC"+getRevolve(element.getRotation())+","+element.getHeight()+","
+            default -> formatStr+="^BC"+","+element.getHeight()+","
                     +(element.getBardisplay()>0?"Y":"N")+","+(element.getBardisplay()>1?"Y":"N")+",N,A";
         }
         formatStr+="^FD"+element.getValue()+"^FS"+WIN_LINE_END;
@@ -174,13 +198,13 @@ public class ZplFunc extends AbstractLabelTemplate {
     }
 
     private String parseQrCodeElement(QrCodeElement element){
-        return "^FO"+element.getX()+","+element.getY()+"^BQ,2,3"+element.getLevel().name()+",7^FD"+element.getValue()+"^FS"+WIN_LINE_END;
+        return "^FO"+element.getX()+","+element.getY()+"^BQ,2,"+element.getCellWidth()+","+element.getLevel().name()+",7^FDLA,"+element.getValue()+"^FS"+WIN_LINE_END;
     }
 
     private String parseShapeElement(ShapeElement element){
         String shapStr = "^FO"+element.getX()+","+element.getY();
         switch (element.getShape()){
-            case ROUND -> shapStr += "^GB"+element.getWidth()+","+element.getHeight()+","+element.getBorderWidth().intValue()+"B,2";
+            case ROUND -> shapStr += "^GB"+element.getWidth()+","+element.getHeight()+","+element.getBorderWidth().intValue()+",B,2";
             case OVAL -> shapStr += "^GE"+element.getWidth()+","+element.getHeight()+","+element.getBorderWidth().intValue();
             case CIRCLE -> shapStr += "^GC"+element.getWidth()+","+element.getBorderWidth().intValue();
             default -> shapStr += "^GB"+element.getWidth()+","+element.getHeight()+","+element.getBorderWidth().intValue();
@@ -190,6 +214,10 @@ public class ZplFunc extends AbstractLabelTemplate {
     }
 
     private String parseLineElement(LineElement element){
+        return "^FO"+element.getX()+","+element.getY()+"^GB"+element.getWidth()+","+element.getHeight()+","+element.getBorderWidth().intValue()+"^FS"+WIN_LINE_END;
+    }
+
+    private String parseVLineElement(VLineElement element){
         return "^FO"+element.getX()+","+element.getY()+"^GB"+element.getWidth()+","+element.getHeight()+","+element.getBorderWidth().intValue()+"^FS"+WIN_LINE_END;
     }
 
@@ -242,7 +270,7 @@ public class ZplFunc extends AbstractLabelTemplate {
         int height = bi.getHeight();
         int wModByte = (width%8)==0 ? 0 : 8-(width%8);
         int wPrintByte = (width+wModByte)/8;
-        String imgHex = Tools.imgToBitmapHex(bi,0,1);
+        String imgHex = Tools.imgToBitmapHex(bi,IMAGE_THRESHOLD,0,1);
         return "~DGGRAPHIC1," + imgHex.length() / 2 + "," + wPrintByte + "," + Tools.zebraCompress(imgHex) + WIN_LINE_END +
                 "^FO" + element.getX() + "," + element.getY() + "^XGGRAPHIC1"+WIN_LINE_END;
     }

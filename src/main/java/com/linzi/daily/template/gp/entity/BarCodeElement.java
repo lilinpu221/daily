@@ -59,7 +59,7 @@ public class BarCodeElement extends BaseElement {
     public BufferedImage getImage() {
         int barCodeHeight = getHeight();
         //画笔中字体大小乘以2
-        int wordHeight = fontSize*2;
+        int wordHeight = Float.valueOf(fontSize*Tools.VECTOR_FONT_RATE).intValue();
         int textY = 1;
         int barCodeY = 1;
         //条码画布

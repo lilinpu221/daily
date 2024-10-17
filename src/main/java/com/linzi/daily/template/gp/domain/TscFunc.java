@@ -7,10 +7,7 @@ import com.linzi.daily.template.gp.Tools;
 import com.linzi.daily.template.gp.entity.*;
 import com.linzi.daily.template.gp.enums.*;
 import net.coobird.thumbnailator.Thumbnails;
-
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -27,6 +24,8 @@ import java.util.List;
  */
 public class TscFunc extends AbstractLabelTemplate {
     private static final String WIN_LINE_END = "\r\n";
+
+    private static final int IMAGE_THRESHOLD = 160;
 
     private static final Charset GB18030 = Charset.forName("GB18030");
 
@@ -117,15 +116,23 @@ public class TscFunc extends AbstractLabelTemplate {
     protected String handleImageElement(ImageElement element) {
         BufferedImage bi;
         if(element.getImgType()== ImageType.LOCAL){
-            //BASE64图片数据
-            bi = ImgUtil.toImage(element.getValue());
+            //去除base64前缀
+            String base64 = element.getValue().substring(element.getValue().indexOf(Tools.BASE64_PREFIX)+7);
+            //BASE64数据转图片
+            bi = ImgUtil.toImage(base64);
         }else{
             try {
                 //URL转图片
-                bi = Thumbnails.of(new URL(element.getValue())).forceSize(element.getWidth(),element.getHeight()).asBufferedImage();
+                bi = Thumbnails.of(new URL(element.getValue())).asBufferedImage();
             } catch (IOException e) {
                 return CharSequenceUtil.EMPTY;
             }
+        }
+        try {
+            //图片按实际大小缩放
+            bi = Thumbnails.of(bi).forceSize(element.getWidth(),element.getHeight()).asBufferedImage();
+        } catch (IOException e) {
+            return CharSequenceUtil.EMPTY;
         }
         int width = bi.getWidth();
         int height = bi.getHeight();
@@ -134,7 +141,7 @@ public class TscFunc extends AbstractLabelTemplate {
         //向上取整
         int wPrintByte = (int)Math.ceil((double)(width+wModByte)/8);
         int hPrintByte = height+hModByte;
-        String imgHex = Tools.imgToBitmapHex(bi,1,0);
+        String imgHex = Tools.imgToBitmapHex(bi,IMAGE_THRESHOLD,1,0);
         return HexUtil.encodeHexStr("BITMAP "+element.getX()+","+element.getY()+","+wPrintByte+","+hPrintByte+",0,",GB18030)+imgHex+"0d0a";
     }
     @Override
@@ -174,8 +181,12 @@ public class TscFunc extends AbstractLabelTemplate {
     }
 
     private String parseBarCodeElement(BarCodeElement element){
-        return HexUtil.encodeHexStr("BARCODE "+element.getX()+","+element.getY()+",\""+getBarCode(element.getBarformat(),element.getValue())+"\","+element.getHeight()+","
-                +(element.getBardisplay()>0?1:0)+","+element.getRotation()+",2,4,\""+element.getValue()+"\""+WIN_LINE_END,GB18030);
+        int barCodeHeight = element.getHeight();
+        //画笔中字体大小乘以2
+        int wordHeight = element.getFontSize()*2;
+        barCodeHeight = barCodeHeight - wordHeight - 1;
+        return HexUtil.encodeHexStr("BARCODE "+element.getX()+","+element.getY()+",\""+getBarCode(element.getBarformat(),element.getValue())+"\","+barCodeHeight+","
+                +(element.getBardisplay()>0?1:0)+","+element.getRotation()+",1,3,\""+element.getValue()+"\""+WIN_LINE_END,GB18030);
     }
 
     private String parseQrCodeElement(QrCodeElement element){
@@ -188,11 +199,11 @@ public class TscFunc extends AbstractLabelTemplate {
     }
 
     private String parseLineElement(LineElement element){
-        return HexUtil.encodeHexStr("BAR "+element.getX()+","+element.getY()+","+element.getWidth()+","+element.getHeight()+WIN_LINE_END,GB18030);
+        return HexUtil.encodeHexStr("BAR "+element.getX()+","+element.getY()+","+element.getWidth()+","+element.getBorderWidth()+WIN_LINE_END,GB18030);
     }
 
     private String parseVLineElement(VLineElement element){
-        return HexUtil.encodeHexStr("BAR "+element.getX()+","+element.getY()+","+element.getWidth()+","+element.getHeight()+WIN_LINE_END,GB18030);
+        return HexUtil.encodeHexStr("BAR "+element.getX()+","+element.getY()+","+element.getWidth()+","+element.getBorderWidth()+WIN_LINE_END,GB18030);
     }
 
     private String getBarCode(BarCodeFormat format,String value){
@@ -204,7 +215,7 @@ public class TscFunc extends AbstractLabelTemplate {
             case CODE39 -> formatStr="39";
             case EAN13 -> formatStr="EAN13";
             case EAN8 -> formatStr="EAN8";
-            case UPCA -> formatStr="UPCA";
+            case UPC -> formatStr="UPCA";
             default -> formatStr="128";
         }
         return formatStr;
@@ -256,7 +267,7 @@ public class TscFunc extends AbstractLabelTemplate {
         int hModByte = (height%8)==0 ? 0 : 8-(height%8);
         int wPrintByte = (width+wModByte)/8;
         int hPrintByte = height+hModByte;
-        String imgHex = Tools.imgToBitmapHex(bi,1,0);
+        String imgHex = Tools.imgToBitmapHex(bi,IMAGE_THRESHOLD,1,0);
         return HexUtil.encodeHexStr("BITMAP "+element.getX()+","+element.getY()+","+wPrintByte+","+hPrintByte+",0,",GB18030)+imgHex+"0d0a";
     }
 }

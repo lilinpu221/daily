@@ -42,7 +42,7 @@ public class LineElement extends BaseElement{
         int x2 = getWidth();
         int y2= 0;
         //横线线宽=高度
-        int borderWidth = getHeight();
+        int borderWidth = Float.valueOf(getBorderWidth()).intValue();
         if (Objects.requireNonNull(borderType) == Border.DOT) {
             //点虚线
             g2d.setStroke(new BasicStroke(borderWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{borderWidth, borderWidth*2}, 0));

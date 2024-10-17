@@ -1,6 +1,7 @@
 package com.linzi.daily.template;
 
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.util.HexUtil;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 @Tag(name = "模版请求")
@@ -24,7 +26,7 @@ import java.util.List;
 @RestController
 public class TemplateController {
 
-    @PostMapping("/gp/testTsc")
+    @PostMapping("/gp/test")
     public String gpTestTsc(@RequestBody String json) throws IOException {
         System.out.println("===请求json===");
         System.out.println(json);
@@ -59,9 +61,13 @@ public class TemplateController {
         FileUtil.appendString(labelStr, FileUtil.file("D:\\hex.txt"), "UTF-8");
         System.out.println("===发送打印数据===");
         GpApiUtils apiUtils = new GpApiUtils();
-        //apiUtils.sendMsg("00596456348920684","3","1",labelStr);
-        apiUtils.sendMsg("dmemrzwtmy7","TSPL","3","1",labelStr);
-        apiUtils.sendMsg("dmemrzw423t","TSPL","3","1",labelStr);
+        if("TSC".equals(layout.getTemplateType())){
+            apiUtils.sendMsg("00596456348920684","TSPL","3","1",labelStr);
+            apiUtils.sendMsg("dmemrzwtmy7","TSPL","3","1",labelStr);
+        }else{
+            labelStr = HexUtil.encodeHexStr(labelStr, Charset.forName("UTF-8"));
+            apiUtils.sendMsg("20190115017903075","ZPL","3","4",labelStr);
+        }
         return "ok";
     }
 }

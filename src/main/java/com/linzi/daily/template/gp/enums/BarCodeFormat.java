@@ -4,7 +4,7 @@ public enum BarCodeFormat {
     /**
      *
      */
-    ADAPT,CODE128,CODE39,EAN13,EAN8,UPCA;
+    ADAPT,CODE128,CODE39,EAN13,EAN8,UPC;
 
     public static BarCodeFormat explain(String format){
         return BarCodeFormat.valueOf(format.toUpperCase());
@@ -15,7 +15,7 @@ public enum BarCodeFormat {
         int length = value.length();
         return switch (length) {
             case 8 -> BarCodeFormat.EAN8;
-            case 12 -> BarCodeFormat.UPCA;
+            case 12 -> BarCodeFormat.UPC;
             case 13 -> BarCodeFormat.EAN13;
             default -> BarCodeFormat.CODE128;
         };

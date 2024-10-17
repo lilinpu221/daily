@@ -40,7 +40,7 @@ public class VLineElement extends BaseElement{
         int x2 = 0;
         int y2 = getHeight();
         //竖线线宽等于宽度
-        int borderWidth = getWidth();
+        int borderWidth = Float.valueOf(getBorderWidth()).intValue();
         if (Objects.requireNonNull(borderType) == Border.DOT) {
             //点虚线
             g2d.setStroke(new BasicStroke(borderWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{borderWidth, borderWidth*2}, 0));

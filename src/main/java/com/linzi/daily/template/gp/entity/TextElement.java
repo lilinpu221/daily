@@ -72,7 +72,7 @@ public class TextElement extends BaseElement{
     @Override
     public BufferedImage getImage() {
         //画笔中字体大小乘以2
-        this.fontSize = fontSize * 2;
+        this.fontSize = Float.valueOf(fontSize * Tools.VECTOR_FONT_RATE).intValue();
         BufferedImage resultImg = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
         // 获取Graphics2D
         Graphics2D g2d = resultImg.createGraphics();

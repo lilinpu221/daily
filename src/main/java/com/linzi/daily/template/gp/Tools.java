@@ -6,15 +6,18 @@ import com.linzi.daily.template.gp.enums.TextAlign;
 import com.linzi.daily.template.jd.Tool;
 import net.coobird.thumbnailator.Thumbnails;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 public class Tools {
-    private static final int RGB_THRESHOLD = 160;
     private static final float SCALE_RATIO = 1.0f;
     private static final float QUALITY_RATIO = 0.8f;
+    //203DPI，矢量字体对应每个点的宽度(像素)比值
+    public static float VECTOR_FONT_RATE = 2.8194f;
+    public static final String BASE64_PREFIX = "base64,";
 
-    public static String imgToBitmapHex(BufferedImage bi,int whiteFill,int blackFill){
+    public static String imgToBitmapHex(BufferedImage bi,int threshold,int whiteFill,int blackFill){
         int width = bi.getWidth();
         int height = bi.getHeight();
         int wModByte = (width%8)==0 ? 0 : 8-(width%8);
@@ -24,21 +27,27 @@ public class Tools {
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 // 下面三行代码将一个数字转换为RGB数字
-                final int color = bi.getRGB(x, y);
-                final int r = (color >> 16) & 0xff;
-                final int g = (color >> 8) & 0xff;
-                final int b = color & 0xff;
-                //使用加权灰度算法
-                int bitStr = (0.3 * r + 0.59 * g + 0.11 * b) >= RGB_THRESHOLD ? whiteFill : blackFill;
-                /**
-                 * 使用平均值灰度算法
-                 * int bitStr = (rgb[0] + rgb[1] + rgb[2])/3 >= RGB_THRESHOLD ? whiteFill : blackFill;
-                 */
+                final int rgb = bi.getRGB(x, y);
+                //默认白底，非透明底色使用阈值判断
+                int bitStr = whiteFill;
+                Color color = new Color(rgb,true);
+                if(color.getAlpha()>0){
+                    //透明低色直接用白色
+                    final int r = (rgb >> 16) & 0xff;
+                    final int g = (rgb >> 8) & 0xff;
+                    final int b = rgb & 0xff;
+                    //使用加权灰度算法
+                    bitStr = (0.3 * r + 0.59 * g + 0.11 * b) >= threshold ? whiteFill : blackFill;
+                    /**
+                     * 使用平均值灰度算法
+                     * int bitStr = (rgb[0] + rgb[1] + rgb[2])/3 >= RGB_THRESHOLD ? whiteFill : blackFill;
+                     */
+                }
                 res.append(bitStr);
             }
-            res.append("1".repeat(Math.max(0, wModByte)));
+            res.append(String.valueOf(whiteFill).repeat(Math.max(0, wModByte)));
         }
-        res.append("1".repeat(Math.max(0, width + wModByte)).repeat(Math.max(0, hModByte)));
+        res.append(String.valueOf(whiteFill).repeat(Math.max(0, width + wModByte)).repeat(Math.max(0, hModByte)));
         //转成十六进制字符串
         String bitTmp;
         String hex;
@@ -111,7 +120,7 @@ public class Tools {
             case CODE39 -> format = BarcodeFormat.CODE_39;
             case EAN13 -> format = BarcodeFormat.EAN_13;
             case EAN8 -> format = BarcodeFormat.EAN_8;
-            case UPCA -> format = BarcodeFormat.UPC_A;
+            case UPC -> format = BarcodeFormat.UPC_A;
             default -> format = BarcodeFormat.CODE_128;
         }
         return format;

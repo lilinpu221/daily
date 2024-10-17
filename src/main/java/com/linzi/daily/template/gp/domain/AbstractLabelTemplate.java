@@ -7,6 +7,7 @@ import com.linzi.daily.template.gp.entity.*;
 import com.linzi.daily.template.gp.enums.Element;
 import lombok.Getter;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,7 +78,7 @@ public abstract class AbstractLabelTemplate {
 
     protected abstract String handleVLineElement(VLineElement vLineElement);
 
-    protected abstract String handleImageElement(ImageElement imageElement);
+    protected abstract String handleImageElement(ImageElement imageElement) ;
 
     protected abstract String buildTail();
 }
