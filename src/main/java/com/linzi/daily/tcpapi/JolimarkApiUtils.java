@@ -114,7 +114,7 @@ public class JolimarkApiUtils {
             return respJson.getJSONObject("return_data");
         }else{
             JSONObject data = new JSONObject();
-            data.put("data",respJson.getStr("return_data"));
+            data.putOpt("data",respJson.getStr("return_data"));
             return data;
         }
     }

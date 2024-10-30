@@ -45,6 +45,9 @@ dependencies {
 	implementation group: 'net.coobird',name:'thumbnailator',version: '0.4.20'
 	implementation group: 'com.google.zxing', name: 'core', version: '3.5.3'
 	implementation group: 'com.google.zxing', name: 'javase', version: '3.5.3'
+	implementation group: 'com.mysql', name: 'mysql-connector-j', version: '8.3.0'
+	implementation group: 'com.baomidou', name: 'mybatis-plus-spring-boot3-starter', version: '3.5.7'
+	implementation group: 'com.alibaba', name: 'druid-spring-boot-3-starter', version: '1.2.23'
 }
 
 tasks.named('test') {

@@ -137,6 +137,13 @@ public class TextElement extends BaseElement{
         char[] textChars = getValue().toCharArray();
         for (int i = 0; i < textChars.length; i++) {
             char c = textChars[i];
+            if(c=='\n'||c=='\r'){
+                // 换行符直接添加
+                textList.add(line.toString());
+                line = new StringBuilder();
+                factWidth = 0;
+                continue;
+            }
             int fontFactWidth = (P_CHINESE.matcher(String.valueOf(c)).find() ? fontSize : fontSize / 2);
             if (factWidth + fontFactWidth >= getWidth()) {
                 // 需要换行

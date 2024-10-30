@@ -25,7 +25,7 @@ import java.util.List;
 public class TscFunc extends AbstractLabelTemplate {
     private static final String WIN_LINE_END = "\r\n";
 
-    private static final int IMAGE_THRESHOLD = 160;
+    private static final int IMAGE_THRESHOLD = 150;
 
     private static final Charset GB18030 = Charset.forName("GB18030");
 
@@ -74,6 +74,8 @@ public class TscFunc extends AbstractLabelTemplate {
     @Override
     protected String handleBarCodeElement(BarCodeElement barCodeElement) {
         if(barCodeElement.needToImg()){
+            //google zxing生成的条码会有空白间距
+            barCodeElement.setX(barCodeElement.getX()-20);
             return getImage(barCodeElement);
         }else{
             return parseBarCodeElement(barCodeElement);
@@ -123,7 +125,7 @@ public class TscFunc extends AbstractLabelTemplate {
         }else{
             try {
                 //URL转图片
-                bi = Thumbnails.of(new URL(element.getValue())).asBufferedImage();
+                bi = Thumbnails.of(new URL(element.getValue())).forceSize(element.getWidth(),element.getHeight()).asBufferedImage();
             } catch (IOException e) {
                 return CharSequenceUtil.EMPTY;
             }
@@ -164,10 +166,10 @@ public class TscFunc extends AbstractLabelTemplate {
                 break;
             }
             String lineText = lineList.get(i);
-            if(i==lineCount-1){
-                //最后一行，计算水平对齐的起始坐标
+//            if(i==lineCount-1){
+//                //最后一行，计算水平对齐的起始坐标
                 x = Tools.textHorizontal(x,textElement.getWidth(),lineText,tscFont.getWidth(),textElement.getTextAlign());
-            }
+//            }
             textBuilder.append("TEXT ").append(x).append(",").append(y).append(",").append(getTextStr(tscFont.getName(), textElement.getRotation(),multi))
                     .append(",").append("\"").append(lineText).append("\"").append(WIN_LINE_END);
             if (textElement.getFontBold()) {
@@ -175,6 +177,7 @@ public class TscFunc extends AbstractLabelTemplate {
                 textBuilder.append("TEXT ").append(x - 1).append(",").append(y - 1).append(",").append(getTextStr(tscFont.getName(), textElement.getRotation(),multi))
                         .append(",").append("\"").append(lineText).append("\"").append(WIN_LINE_END);
             }
+            x = textElement.getX();
             y = y+(tscFont.getHeight()*multi);
         }
         return HexUtil.encodeHexStr(textBuilder.toString(),GB18030);
@@ -203,7 +206,7 @@ public class TscFunc extends AbstractLabelTemplate {
     }
 
     private String parseVLineElement(VLineElement element){
-        return HexUtil.encodeHexStr("BAR "+element.getX()+","+element.getY()+","+element.getWidth()+","+element.getBorderWidth()+WIN_LINE_END,GB18030);
+        return HexUtil.encodeHexStr("BAR "+element.getX()+","+element.getY()+","+element.getBorderWidth()+","+element.getHeight()+WIN_LINE_END,GB18030);
     }
 
     private String getBarCode(BarCodeFormat format,String value){

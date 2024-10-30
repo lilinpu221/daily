@@ -21,6 +21,9 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+/**
+ * @author Lil
+ */
 @Tag(name = "模版请求")
 @RequestMapping("/template")
 @RestController
@@ -62,8 +65,7 @@ public class TemplateController {
         System.out.println("===发送打印数据===");
         GpApiUtils apiUtils = new GpApiUtils();
         if("TSC".equals(layout.getTemplateType())){
-            apiUtils.sendMsg("00596456348920684","TSPL","3","1",labelStr);
-            apiUtils.sendMsg("dmemrzwtmy7","TSPL","3","1",labelStr);
+            apiUtils.sendMsg("dmemrzw423t","TSPL","3","1",labelStr);
         }else{
             labelStr = HexUtil.encodeHexStr(labelStr, Charset.forName("UTF-8"));
             apiUtils.sendMsg("20190115017903075","ZPL","3","4",labelStr);

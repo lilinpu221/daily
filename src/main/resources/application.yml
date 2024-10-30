@@ -1,6 +1,41 @@
 spring:
   application:
     name: daily
+  datasource:
+    druid:
+      #SQL请求超时时间，一次SQL请求如果在该时间内没有返回任何数据，操作系统会抛出 Read timeout 的异常
+      socket-timeout: 9000
+      #创建数据库连接超时时间
+      connect-timeout: 3000
+      #连接key-value参数
+      connection-properties: config.decrypt=true;config.decrypt.key=${pubKey}
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://localhost:3306/poscom?characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&rewriteBatchedStatements=true&allowPublicKeyRetrieval=true
+      username: root
+      password: czoIUIMGw79NIiVhEQt2uKvNi2D/oVZnaD+1U+aVlgpOXghAuiI3o3r9S9yySmFTF/U2d8oozB/CyMKxel4xng==
+      #初始化连接数
+      initial-size: 5
+      #最小连接数
+      min-idle: 5
+      #最大连接数
+      max-active: 10
+      #空闲连接的最大分钟，超过则会被销毁
+      idle-timeout-minutes: 10
+      #配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+      time-between-eviction-runs-millis: 60000
+      #一个连接在池中最小生存的时间，单位是毫秒
+      min-evictable-idle-time-millis: 300000
+      #申请连接的时候检测，如果空闲时间大于timeBetweenEvictionRunsMillis，执行validationQuery检测连接是否有效
+      test-while-idle: true
+      #请连接时执行validationQuery检测连接是否有效
+      test-on-borrow: false
+      #归还连接时执行validationQuery检测连接是否有效
+      test-on-return: false
+      #用来检测连接是否有效的sql
+      validation-query: select 1
+      filter:
+        config:
+          enabled: true
 server:
   port: 9080
 # springdoc-openapi配置
@@ -41,3 +76,9 @@ sa-token:
   token-style: random-64
   # 是否输出操作日志
   is-log: true
+############### mybatisplus 配置 ################
+pubKey: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBANKApOS+ZjIGKjzr6hYzRzmYD7fBT99mCStOuBbpM0A0Lpti84tEyybHBaCdBpMx3oisFbCVtyMebMgRfJET3YsCAwEAAQ==
+mybatis-plus:
+  configuration:
+    # 将sql打印到控制台
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
