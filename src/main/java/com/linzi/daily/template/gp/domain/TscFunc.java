@@ -7,7 +7,10 @@ import com.linzi.daily.template.gp.Tools;
 import com.linzi.daily.template.gp.entity.*;
 import com.linzi.daily.template.gp.enums.*;
 import net.coobird.thumbnailator.Thumbnails;
+
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -21,12 +24,10 @@ import java.util.List;
  * 203DPI，每个点的宽度(像素)=203/72=2.8194
  * 300DPI，每个点的宽度(像素)=300/72=4.1666
  * 字号大小(点) = 点阵高度(像素）/每点的宽度(像素）
+ * @author Lil
  */
 public class TscFunc extends AbstractLabelTemplate {
     private static final String WIN_LINE_END = "\r\n";
-
-    private static final int IMAGE_THRESHOLD = 150;
-
     private static final Charset GB18030 = Charset.forName("GB18030");
 
     public TscFunc(Layout layout) {
@@ -58,7 +59,7 @@ public class TscFunc extends AbstractLabelTemplate {
     @Override
     protected String handleTextElement(TextElement textElement) {
         if(textElement.needToImg()){
-            return getImage(textElement);
+            return getTextImage(textElement);
         }else{
             int oldSize = textElement.getFontSize();
             TscFont tscFont = TscFont.explain(textElement.getFontFamily(),oldSize);
@@ -76,7 +77,7 @@ public class TscFunc extends AbstractLabelTemplate {
         if(barCodeElement.needToImg()){
             //google zxing生成的条码会有空白间距
             barCodeElement.setX(barCodeElement.getX()-20);
-            return getImage(barCodeElement);
+            return getTextImage(barCodeElement);
         }else{
             return parseBarCodeElement(barCodeElement);
         }
@@ -90,7 +91,7 @@ public class TscFunc extends AbstractLabelTemplate {
     @Override
     protected String handleShapeElement(ShapeElement shapeElement) {
         if(shapeElement.needToImg()){
-            return getImage(shapeElement);
+            return getTextImage(shapeElement);
         }else{
             return parseShapeElement(shapeElement);
         }
@@ -99,7 +100,7 @@ public class TscFunc extends AbstractLabelTemplate {
     @Override
     protected String handleLineElement(LineElement lineElement) {
         if(lineElement.needToImg()){
-            return getImage(lineElement);
+            return getTextImage(lineElement);
         }else{
             return parseLineElement(lineElement);
         }
@@ -108,7 +109,7 @@ public class TscFunc extends AbstractLabelTemplate {
     @Override
     protected String handleVLineElement(VLineElement vLineElement) {
         if(vLineElement.needToImg()){
-            return getImage(vLineElement);
+            return getTextImage(vLineElement);
         }else{
             return parseVLineElement(vLineElement);
         }
@@ -143,7 +144,7 @@ public class TscFunc extends AbstractLabelTemplate {
         //向上取整
         int wPrintByte = (int)Math.ceil((double)(width+wModByte)/8);
         int hPrintByte = height+hModByte;
-        String imgHex = Tools.imgToBitmapHex(bi,IMAGE_THRESHOLD,1,0);
+        String imgHex = Tools.imgToBitmapHex(bi,Tools.IMAGE_THRESHOLD,1,0);
         return HexUtil.encodeHexStr("BITMAP "+element.getX()+","+element.getY()+","+wPrintByte+","+hPrintByte+",0,",GB18030)+imgHex+"0d0a";
     }
     @Override
@@ -156,7 +157,7 @@ public class TscFunc extends AbstractLabelTemplate {
             return CharSequenceUtil.EMPTY;
         }
         //文本框支持的最大行数
-        int lineCount = textElement.getHeight()<tscFont.getHeight()?1:textElement.getHeight()/tscFont.getHeight();
+        int lineCount = textElement.getHeight()<tscFont.getHeight()?1:textElement.getHeight()/(tscFont.getHeight()*multi);
         StringBuilder textBuilder = new StringBuilder();
         int y = textElement.getY();
         int x = textElement.getX();
@@ -166,10 +167,13 @@ public class TscFunc extends AbstractLabelTemplate {
                 break;
             }
             String lineText = lineList.get(i);
-//            if(i==lineCount-1){
-//                //最后一行，计算水平对齐的起始坐标
-                x = Tools.textHorizontal(x,textElement.getWidth(),lineText,tscFont.getWidth(),textElement.getTextAlign());
-//            }
+            int alignValue = Tools.textHorizontal(textElement.getWidth(),lineText,tscFont.getWidth()*multi,textElement.getTextAlign());
+            switch (textElement.getRotation()){
+                default -> x = x+alignValue;
+                case 180 -> x = x-alignValue;
+                case 90 -> y = y+alignValue;
+                case 270 -> y = y-alignValue;
+            }
             textBuilder.append("TEXT ").append(x).append(",").append(y).append(",").append(getTextStr(tscFont.getName(), textElement.getRotation(),multi))
                     .append(",").append("\"").append(lineText).append("\"").append(WIN_LINE_END);
             if (textElement.getFontBold()) {
@@ -177,8 +181,13 @@ public class TscFunc extends AbstractLabelTemplate {
                 textBuilder.append("TEXT ").append(x - 1).append(",").append(y - 1).append(",").append(getTextStr(tscFont.getName(), textElement.getRotation(),multi))
                         .append(",").append("\"").append(lineText).append("\"").append(WIN_LINE_END);
             }
-            x = textElement.getX();
-            y = y+(tscFont.getHeight()*multi);
+            switch (textElement.getRotation()){
+                default -> y = y+(tscFont.getHeight()*multi);
+                case 90-> x = x-(tscFont.getHeight()*multi);
+                case 180-> y = y-(tscFont.getHeight()*multi);
+                case 270-> x = x+(tscFont.getHeight()*multi);
+            }
+
         }
         return HexUtil.encodeHexStr(textBuilder.toString(),GB18030);
     }
@@ -262,7 +271,7 @@ public class TscFunc extends AbstractLabelTemplate {
         }
     }
 
-    private String getImage(BaseElement element){
+    private String getTextImage(BaseElement element){
         BufferedImage bi = element.getImage();
         int width = bi.getWidth();
         int height = bi.getHeight();
@@ -270,7 +279,18 @@ public class TscFunc extends AbstractLabelTemplate {
         int hModByte = (height%8)==0 ? 0 : 8-(height%8);
         int wPrintByte = (width+wModByte)/8;
         int hPrintByte = height+hModByte;
-        String imgHex = Tools.imgToBitmapHex(bi,IMAGE_THRESHOLD,1,0);
-        return HexUtil.encodeHexStr("BITMAP "+element.getX()+","+element.getY()+","+wPrintByte+","+hPrintByte+",0,",GB18030)+imgHex+"0d0a";
+        String imgHex = Tools.imgToBitmapHex(bi,Tools.TEXT_THRESHOLD,1,0);
+        int x = element.getX();
+        int y = element.getY();
+        switch (element.getRotation()){
+            default -> {}
+            case 90 -> x = x-width;
+            case 180 -> {
+                x = x-width;
+                y = y-height;
+            }
+            case 270 -> y = y-height;
+        }
+        return HexUtil.encodeHexStr("BITMAP "+x+","+y+","+wPrintByte+","+hPrintByte+",0,",GB18030)+imgHex+"0d0a";
     }
 }

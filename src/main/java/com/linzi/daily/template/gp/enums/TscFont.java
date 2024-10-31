@@ -5,16 +5,20 @@ import lombok.Setter;
 
 import java.util.Arrays;
 
+/**
+ * @author Lil
+ */
+
 @Getter
 public enum TscFont {
 
     /*
     * Tsc基本字体
      */
-    _8X12("1",4,8,12),
-    _12X20("2",7,12,20),
-    _16X16("TSS16.BF2",6,16,16),
-    _24X24("TSS24.BF2",8,24,24);
+    _8X12("1",4,12,14),
+    _12X20("2",7,20,20),
+    _16X16("TSS16.BF2",6,18,16),
+    _24X24("TSS24.BF2",8,22,24);
 
     private final String name;
     private final int size;

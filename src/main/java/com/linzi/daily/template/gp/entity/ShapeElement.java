@@ -55,6 +55,6 @@ public class ShapeElement extends BaseElement{
             }
         }
         g2d.dispose();
-        return Tools.compressImage(bi);
+        return Tools.compressImage(bi,0);
     }
 }

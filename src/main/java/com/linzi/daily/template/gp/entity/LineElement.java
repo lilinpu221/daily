@@ -52,6 +52,6 @@ public class LineElement extends BaseElement{
         }
         g2d.drawLine(0, 0, x2, y2);
         g2d.dispose();
-        return Tools.compressImage(bi);
+        return Tools.compressImage(bi,0);
     }
 }

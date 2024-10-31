@@ -11,6 +11,7 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.font.TextAttribute;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.text.AttributedString;
 import java.util.ArrayList;
@@ -109,8 +110,8 @@ public class TextElement extends BaseElement{
             int x;
             int y = fontSize * (i+1);
             x = switch (textAlign) {
-                case CENTER -> (getWidth() - factLineWidth) / 2;
-                case RIGHT -> getWidth() - factLineWidth;
+                case CENTER -> (getWidth()-factLineWidth)<0?1:((getWidth()-factLineWidth)/2);
+                case RIGHT -> (getWidth()-factLineWidth)<0?1:(getWidth()-factLineWidth);
                 default -> 1;
             };
             AttributedString as = new AttributedString(lineValue);
@@ -126,9 +127,14 @@ public class TextElement extends BaseElement{
             g2d.drawString(as.getIterator(), x, y);
         }
         g2d.dispose();
-        return Tools.compressImage(resultImg);
+        BufferedImage returnImage = Tools.compressImage(resultImg,getRotation());
+        try {
+            ImageIO.write(returnImage,"jpg",new File("D:\\"+getId()+".jpg"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return returnImage;
     }
-
 
     public List<String> textWrap() {
         List<String> textList = new ArrayList<>();

@@ -7,7 +7,6 @@ import com.linzi.daily.template.gp.entity.*;
 import com.linzi.daily.template.gp.enums.*;
 import net.coobird.thumbnailator.Thumbnails;
 
-import java.awt.datatransfer.FlavorEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
@@ -15,11 +14,11 @@ import java.util.List;
 
 /**
  * ZPL使用矢量字体
+ * @author Lil
  */
 public class ZplFunc extends AbstractLabelTemplate {
 
     private static final String WIN_LINE_END = "\n";
-    private static final int IMAGE_THRESHOLD = 135;
     public ZplFunc(Layout layout) {
         super(layout);
     }
@@ -46,7 +45,7 @@ public class ZplFunc extends AbstractLabelTemplate {
     @Override
     protected String handleTextElement(TextElement textElement) {
         if(textElement.needToImg()){
-            return getImage(textElement);
+            return getTextImage(textElement);
         }else{
             //矢量字体字号转像素比
             int factFontSize = Float.valueOf(textElement.getFontSize()*Tools.VECTOR_FONT_RATE).intValue();
@@ -59,7 +58,7 @@ public class ZplFunc extends AbstractLabelTemplate {
     @Override
     protected String handleBarCodeElement(BarCodeElement barCodeElement) {
         if(barCodeElement.needToImg()){
-            return getImage(barCodeElement);
+            return getTextImage(barCodeElement);
         }else{
             return parseBarCodeElement(barCodeElement,barCodeElement.getValue());
         }
@@ -78,7 +77,7 @@ public class ZplFunc extends AbstractLabelTemplate {
     @Override
     protected String handleLineElement(LineElement lineElement) {
         if(lineElement.needToImg()){
-            return getImage(lineElement);
+            return getTextImage(lineElement);
         }else{
             return parseLineElement(lineElement);
         }
@@ -87,7 +86,7 @@ public class ZplFunc extends AbstractLabelTemplate {
     @Override
     protected String handleVLineElement(VLineElement vLineElement) {
         if(vLineElement.needToImg()){
-            return getImage(vLineElement);
+            return getTextImage(vLineElement);
         }else{
             return parseVLineElement(vLineElement);
         }
@@ -120,7 +119,7 @@ public class ZplFunc extends AbstractLabelTemplate {
         int height = bi.getHeight();
         int wModByte = (width%8)==0 ? 0 : 8-(width%8);
         int wPrintByte = (width+wModByte)/8;
-        String imgHex = Tools.imgToBitmapHex(bi,IMAGE_THRESHOLD,0,1);
+        String imgHex = Tools.imgToBitmapHex(bi,Tools.IMAGE_THRESHOLD,0,1);
         return "~DGGRAPHIC1," + imgHex.length() / 2 + "," + wPrintByte + "," + Tools.zebraCompress(imgHex) + WIN_LINE_END +
                 "^FO" + element.getX() + "," + element.getY() + "^XGGRAPHIC1"+WIN_LINE_END;
     }
@@ -148,11 +147,14 @@ public class ZplFunc extends AbstractLabelTemplate {
                 break;
             }
             String lineText = lineList.get(i);
-            if(i==lineCount-1){
-                //最后一行，计算水平对齐的起始坐标
-                x = Tools.textHorizontal(x,element.getWidth(),lineText,fontWidth,element.getTextAlign());
+            int alignValue = Tools.textHorizontal(element.getWidth(),lineText,fontWidth,element.getTextAlign());
+            switch (element.getRotation()){
+                default -> x = x+alignValue;
+                case 180 -> x = x-alignValue;
+                case 90 -> y = y+alignValue;
+                case 270 -> y = y-alignValue;
             }
-            textBuilder.append("^FW"+getRevolve(element.getRotation())).append(WIN_LINE_END);
+            textBuilder.append("^FW").append(getRevolve(element.getRotation())).append(WIN_LINE_END);
             textBuilder.append("^FO").append(x).append(",").append(y).append("^AA,")
                     .append(fontWidth).append(",").append(fontHight)
                     .append("^FD").append(lineText).append("^FS").append(WIN_LINE_END);
@@ -166,10 +168,10 @@ public class ZplFunc extends AbstractLabelTemplate {
                         .append("^FD").append(lineText).append("^FS").append(WIN_LINE_END);
             }
             switch (element.getRotation()){
-                case 90 -> x = x-fontWidth;
-                case 180 -> y = y-fontHight;
-                case 270 -> x = x+fontWidth;
                 default -> y = y+fontHight;
+                case 90 -> x = x-fontHight;
+                case 180 -> y = y-fontHight;
+                case 270 -> x = x+fontHight;
             }
         }
         return textBuilder.toString();
@@ -264,13 +266,24 @@ public class ZplFunc extends AbstractLabelTemplate {
         return direction;
     }
 
-    private String getImage(BaseElement element){
+    private String getTextImage(BaseElement element){
         BufferedImage bi = element.getImage();
         int width = bi.getWidth();
         int height = bi.getHeight();
         int wModByte = (width%8)==0 ? 0 : 8-(width%8);
         int wPrintByte = (width+wModByte)/8;
-        String imgHex = Tools.imgToBitmapHex(bi,IMAGE_THRESHOLD,0,1);
+        String imgHex = Tools.imgToBitmapHex(bi,Tools.TEXT_THRESHOLD,0,1);
+        int x = element.getX();
+        int y = element.getY();
+        switch (element.getRotation()){
+            default -> {}
+            case 90 -> x = x-width;
+            case 180 -> {
+                x = x-width;
+                y = y-height;
+            }
+            case 270 -> y = y-height;
+        }
         return "~DGGRAPHIC1," + imgHex.length() / 2 + "," + wPrintByte + "," + Tools.zebraCompress(imgHex) + WIN_LINE_END +
                 "^FO" + element.getX() + "," + element.getY() + "^XGGRAPHIC1"+WIN_LINE_END;
     }

@@ -120,6 +120,6 @@ public class BarCodeElement extends BaseElement {
         //条码添加到画布
         resultG2d.drawImage(barcodeImage, 0, barCodeY, barcodeImage.getWidth(null), barcodeImage.getHeight(null), Color.WHITE, null);
         resultG2d.dispose();
-        return Tools.compressImage(resultImage);
+        return Tools.compressImage(resultImage,getRotation());
     }
 }

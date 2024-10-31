@@ -798,18 +798,19 @@ public class GpApiUtils {
         String[] devices = deviceCodes.split(",");
         for(String device:devices){
             //添加打印机
-            api.adddev(device);
+            //api.adddev(device);
             //api.sendMsg(deviceCodes,mode2,charset1,mode2Esc);
             //api.deviceInfo(device);
             //api.getStatus(device);
             //取消未打印
             //api.cancelPrint(device);
-            api.romUpdate(device,"3.5.14.35");
+            //api.romUpdate(device,"3.5.14.35");
             //api.sendVoice(device,"已|收|到|0|.|0|1|元");
-            Thread.sleep(1500);
+            //Thread.sleep(1500);
             //删除打印机
-            api.deldev(device);
+            //api.deldev(device);
         }
+        api.sendMsg("dmemrzw423t","TSPL","3","1","5345542048454144204F4E0A534554205052494E544B4559204F46460A534554204B455931204F4E0A534554204B455932204F4E0A434C530A53495A45203530206D6D2C3430206D6D0A4741502030206D6D2C30206D6D0A535045454420330A44454E5349545920370A5345542054454152204F46460A53455420524942424F4E204F46460A534849465420300A424F5820332C322C3339382C3331352C320A424152434F4445203131302C35302C22313238222C33332C302C302C312C332C22313233343536220A424152434F4445203131302C35302C22313238222C33332C302C39302C312C332C22313233343536220A424152434F4445203131302C35302C22313238222C33332C302C3138302C312C332C22313233343536220A5052494E5420312C31");
         //String tData = "{\"words1672107214122\":\"撒发发撒safsasd\",\"barcode1688023763027\":\"124141-23423213\",\"qrcode1688023770755\":\"https://www.poscom.cn/help/doc/\"}";
         //api.templetPrint(deviceCodes,"eeead728dacf4b37acd7e4ab1ae5c4ec",tData,"0");
 

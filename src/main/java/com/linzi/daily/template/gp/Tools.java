@@ -14,8 +14,12 @@ public class Tools {
     private static final float SCALE_RATIO = 1.0f;
     private static final float QUALITY_RATIO = 0.8f;
     //203DPI，矢量字体对应每个点的宽度(像素)比值
-    public static float VECTOR_FONT_RATE = 2.8194f;
+    public static float VECTOR_FONT_RATE = 2.1f;
     public static final String BASE64_PREFIX = "base64,";
+
+    public static final int IMAGE_THRESHOLD = 135;
+
+    public static final int TEXT_THRESHOLD = 180;
 
     public static String imgToBitmapHex(BufferedImage bi,int threshold,int whiteFill,int blackFill){
         int width = bi.getWidth();
@@ -83,32 +87,30 @@ public class Tools {
     }
 
     /**
-     * 计算文本水平对齐x坐标
+     * 计算文本水平对齐差值
      * @param width 文本框宽度
      * @param text 文本内容
      * @param fontWidth 字体宽度
      * @param textAlign 水平对齐方式
-     * @param x 初始x坐标
      * @return int
      */
-    public static int textHorizontal(int x, int width, String text, int fontWidth, TextAlign textAlign){
+    public static int textHorizontal(int width, String text, int fontWidth, TextAlign textAlign){
         int textWidth = textFactWidth(text,fontWidth);
         int remainWidth = width-textWidth;
+        int alignValue = 0;
         if(textAlign== TextAlign.CENTER){
             //居中，x坐标起始等于余数除以2
-            return x+(remainWidth/2);
+            alignValue = remainWidth/2;
         }else if (textAlign== TextAlign.RIGHT){
             //居右，x坐标起始等于余数
-            return x+remainWidth;
-        }else{
-            //居左
-            return x;
+            alignValue=remainWidth;
         }
+        return alignValue;
     }
 
-    public static BufferedImage compressImage(BufferedImage source) {
+    public static BufferedImage compressImage(BufferedImage source,double rotate) {
         try {
-            return Thumbnails.of(source).scale(SCALE_RATIO).outputQuality(QUALITY_RATIO).asBufferedImage();
+            return Thumbnails.of(source).scale(SCALE_RATIO).rotate(rotate).outputQuality(QUALITY_RATIO).asBufferedImage();
         } catch (IOException e) {
             return source;
         }
