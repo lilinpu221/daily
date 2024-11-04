@@ -42,13 +42,13 @@ public class LineElement extends BaseElement{
         int x2 = getWidth();
         int y2= 0;
         //横线线宽=高度
-        int borderWidth = Float.valueOf(getBorderWidth()).intValue();
+        int borderWidth = getBorderWidth().intValue();
         if (Objects.requireNonNull(borderType) == Border.DOT) {
-            //点虚线
-            g2d.setStroke(new BasicStroke(borderWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{borderWidth, borderWidth*2}, 0));
+            // 点虚线
+            g2d.setStroke(new BasicStroke(borderWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL, 0, new float[]{2.0f, borderWidth * 2}, 0));
         } else {
-            //横虚线
-            g2d.setStroke(new BasicStroke(borderWidth, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 10.0f, new float[]{borderWidth*2, borderWidth*4}, 0));
+            // 横虚线
+            g2d.setStroke(new BasicStroke(borderWidth, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 10.0f, new float[]{borderWidth * 2, borderWidth * 4}, 0));
         }
         g2d.drawLine(0, 0, x2, y2);
         g2d.dispose();

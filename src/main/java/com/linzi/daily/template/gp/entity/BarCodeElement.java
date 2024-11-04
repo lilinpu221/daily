@@ -52,7 +52,7 @@ public class BarCodeElement extends BaseElement {
 
     @Override
     public Boolean needToImg() {
-        return fontFamily != FontFamily.ARIAL || fontSize != 8 || bardisplay == 2;
+        return fontFamily != FontFamily.ARIAL || fontSize != 8 || bardisplay == 2 ;
     }
 
     @Override

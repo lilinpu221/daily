@@ -48,6 +48,7 @@ dependencies {
 	implementation group: 'com.mysql', name: 'mysql-connector-j', version: '8.3.0'
 	implementation group: 'com.baomidou', name: 'mybatis-plus-spring-boot3-starter', version: '3.5.7'
 	implementation group: 'com.alibaba', name: 'druid-spring-boot-3-starter', version: '1.2.23'
+	implementation group: 'com.alibaba', name: 'fastjson', version: '1.2.83'
 }
 
 tasks.named('test') {

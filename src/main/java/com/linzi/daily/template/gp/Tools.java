@@ -14,10 +14,10 @@ public class Tools {
     private static final float SCALE_RATIO = 1.0f;
     private static final float QUALITY_RATIO = 0.8f;
     //203DPI，矢量字体对应每个点的宽度(像素)比值
-    public static float VECTOR_FONT_RATE = 2.1f;
+    public static float VECTOR_FONT_RATE = 2.8194f;
     public static final String BASE64_PREFIX = "base64,";
 
-    public static final int IMAGE_THRESHOLD = 135;
+    public static final int IMAGE_THRESHOLD = 128;
 
     public static final int TEXT_THRESHOLD = 180;
 

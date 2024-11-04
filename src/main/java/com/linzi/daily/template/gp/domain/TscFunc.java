@@ -122,7 +122,11 @@ public class TscFunc extends AbstractLabelTemplate {
             //去除base64前缀
             String base64 = element.getValue().substring(element.getValue().indexOf(Tools.BASE64_PREFIX)+7);
             //BASE64数据转图片
-            bi = ImgUtil.toImage(base64);
+            try {
+                bi = Thumbnails.of(ImgUtil.toImage(base64)).forceSize(element.getWidth(),element.getHeight()).asBufferedImage();
+            } catch (IOException e) {
+                return CharSequenceUtil.EMPTY;
+            }
         }else{
             try {
                 //URL转图片
@@ -130,12 +134,6 @@ public class TscFunc extends AbstractLabelTemplate {
             } catch (IOException e) {
                 return CharSequenceUtil.EMPTY;
             }
-        }
-        try {
-            //图片按实际大小缩放
-            bi = Thumbnails.of(bi).forceSize(element.getWidth(),element.getHeight()).asBufferedImage();
-        } catch (IOException e) {
-            return CharSequenceUtil.EMPTY;
         }
         int width = bi.getWidth();
         int height = bi.getHeight();
@@ -181,13 +179,26 @@ public class TscFunc extends AbstractLabelTemplate {
                 textBuilder.append("TEXT ").append(x - 1).append(",").append(y - 1).append(",").append(getTextStr(tscFont.getName(), textElement.getRotation(),multi))
                         .append(",").append("\"").append(lineText).append("\"").append(WIN_LINE_END);
             }
+            //判断旋转
             switch (textElement.getRotation()){
-                default -> y = y+(tscFont.getHeight()*multi);
-                case 90-> x = x-(tscFont.getHeight()*multi);
-                case 180-> y = y-(tscFont.getHeight()*multi);
-                case 270-> x = x+(tscFont.getHeight()*multi);
-            }
+                default ->{
+                    x = textElement.getX();
+                    y = y+(tscFont.getHeight()*multi);
+                }
+                case 90->{
+                    x = x-(tscFont.getHeight()*multi);
+                    y = textElement.getY();
+                }
+                case 180->{
+                    x = textElement.getX();
+                    y = y-(tscFont.getHeight()*multi);
+                }
+                case 270->{
+                    x = x+(tscFont.getHeight()*multi);
+                    y = textElement.getY();
+                }
 
+            }
         }
         return HexUtil.encodeHexStr(textBuilder.toString(),GB18030);
     }
@@ -198,7 +209,7 @@ public class TscFunc extends AbstractLabelTemplate {
         int wordHeight = element.getFontSize()*2;
         barCodeHeight = barCodeHeight - wordHeight - 1;
         return HexUtil.encodeHexStr("BARCODE "+element.getX()+","+element.getY()+",\""+getBarCode(element.getBarformat(),element.getValue())+"\","+barCodeHeight+","
-                +(element.getBardisplay()>0?1:0)+","+element.getRotation()+",1,3,\""+element.getValue()+"\""+WIN_LINE_END,GB18030);
+                +(element.getBardisplay()>0?1:0)+","+element.getRotation()+",2,4,\""+element.getValue()+"\""+WIN_LINE_END,GB18030);
     }
 
     private String parseQrCodeElement(QrCodeElement element){

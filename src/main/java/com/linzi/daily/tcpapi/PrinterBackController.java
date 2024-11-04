@@ -1,5 +1,6 @@
 package com.linzi.daily.tcpapi;
 
+import cn.hutool.core.util.RandomUtil;
 import cn.hutool.json.JSONUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -7,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.LockSupport;
 
 @RequestMapping("/printerback")
 @RestController
@@ -29,9 +32,10 @@ public class PrinterBackController {
     }
 
     @RequestMapping("/gpCallBack")
-    public String gpCallBack(HttpServletRequest request){
+    public String gpCallBack(HttpServletRequest request) throws InterruptedException {
         Map<String, String[]> reqMap = request.getParameterMap();
         System.out.println("====>"+ JSONUtil.toJsonStr(reqMap));
+        TimeUnit.SECONDS.sleep(RandomUtil.randomInt(60));
         return "{\"data\":\"OK\"}";
     }
 }

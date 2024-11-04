@@ -51,7 +51,7 @@ public class ZplFunc extends AbstractLabelTemplate {
             int factFontSize = Float.valueOf(textElement.getFontSize()*Tools.VECTOR_FONT_RATE).intValue();
             textElement.setFontSize(factFontSize);
             List<String> lineList = textElement.textWrap();
-            return parseFont(textElement,lineList);
+            return parseTextElement(textElement,lineList);
         }
     }
 
@@ -98,22 +98,19 @@ public class ZplFunc extends AbstractLabelTemplate {
         if(element.getImgType()== ImageType.LOCAL){
             //去除base64前缀
             String base64 = element.getValue().substring(element.getValue().indexOf(Tools.BASE64_PREFIX)+7);
-            //BASE64图片数据
-            bi = ImgUtil.toImage(base64);
-
-        }else{
+            //BASE64数据转图片
             try {
-                //URL转图片
-                bi = Thumbnails.of(new URL(element.getValue())).asBufferedImage();
+                bi = Thumbnails.of(ImgUtil.toImage(base64)).forceSize(element.getWidth(),element.getHeight()).asBufferedImage();
             } catch (IOException e) {
                 return CharSequenceUtil.EMPTY;
             }
-        }
-        try {
-            //图片按实际大小缩放
-            bi = Thumbnails.of(bi).forceSize(element.getWidth(),element.getHeight()).asBufferedImage();
-        } catch (IOException e) {
-            return CharSequenceUtil.EMPTY;
+        }else{
+            try {
+                //URL转图片
+                bi = Thumbnails.of(new URL(element.getValue())).forceSize(element.getWidth(),element.getHeight()).asBufferedImage();
+            } catch (IOException e) {
+                return CharSequenceUtil.EMPTY;
+            }
         }
         int width = bi.getWidth();
         int height = bi.getHeight();
@@ -129,7 +126,7 @@ public class ZplFunc extends AbstractLabelTemplate {
         return "^PQ"+getLayout().getNumber()+",0,0,Y" + WIN_LINE_END + "^XZ"+ WIN_LINE_END;
     }
 
-    private String parseFont(TextElement element, List<String> lineList){
+    private String parseTextElement(TextElement element, List<String> lineList){
         if(element.getFontFamily()!= FontFamily.SIMSUN&&element.getFontFamily()!=FontFamily.ARIAL){
             return CharSequenceUtil.EMPTY;
         }
@@ -163,15 +160,24 @@ public class ZplFunc extends AbstractLabelTemplate {
                 textBuilder.append("^FO").append(x-1).append(",").append(y-1).append("^AA,")
                         .append(fontWidth).append(",").append(fontHight)
                         .append("^FD").append(lineText).append("^FS").append(WIN_LINE_END);
-                textBuilder.append("^FO").append(x+1).append(",").append(y+1).append("^AA,")
-                        .append(fontWidth).append(",").append(fontHight)
-                        .append("^FD").append(lineText).append("^FS").append(WIN_LINE_END);
             }
             switch (element.getRotation()){
-                default -> y = y+fontHight;
-                case 90 -> x = x-fontHight;
-                case 180 -> y = y-fontHight;
-                case 270 -> x = x+fontHight;
+                default -> {
+                    x = element.getX();
+                    y = y+fontHight;
+                }
+                case 90 -> {
+                    x = x-fontHight;
+                    y = element.getY();
+                }
+                case 180 -> {
+                    x = element.getX();
+                    y = y-fontHight;
+                }
+                case 270 -> {
+                    x = x+fontHight;
+                    y = element.getY();
+                }
             }
         }
         return textBuilder.toString();
