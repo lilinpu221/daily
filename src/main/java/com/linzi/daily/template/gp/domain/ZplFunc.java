@@ -138,18 +138,53 @@ public class ZplFunc extends AbstractLabelTemplate {
         StringBuilder textBuilder = new StringBuilder();
         int y = element.getY();
         int x = element.getX();
+        //旋转角度的坐标初始化处理
+        switch (element.getRotation()){
+            default -> {}
+            case 90 -> {
+                x = x-(element.getHeight()/2);
+            }
+            case 180 -> {
+                x = x-element.getWidth();
+            }
+            case 270 -> {
+                y = y-element.getWidth();
+            }
+        }
         for(int i=0;i<lineCount;i++) {
             if (i >= lineList.size()) {
                 //超过文本总数
                 break;
             }
             String lineText = lineList.get(i);
+            //对齐方式处理
             int alignValue = Tools.textHorizontal(element.getWidth(),lineText,fontWidth,element.getTextAlign());
             switch (element.getRotation()){
-                default -> x = x+alignValue;
-                case 180 -> x = x-alignValue;
-                case 90 -> y = y+alignValue;
-                case 270 -> y = y-alignValue;
+                case 0 -> {
+                    if(TextAlign.LEFT!=element.getTextAlign()) {
+                        //居左x不用变
+                        x = x + alignValue;
+                    }
+                }
+                case 180 -> {
+                    if(TextAlign.RIGHT!=element.getTextAlign()) {
+                        //居右x不用变
+                        x = x + alignValue;
+                    }
+                }
+                case 90 -> {
+                    if(TextAlign.LEFT!=element.getTextAlign()) {
+                        //居左y不用变
+                        y = y+alignValue;
+                    }
+                }
+                case 270 ->{
+                    if(TextAlign.RIGHT!=element.getTextAlign()){
+                        //居右y不用变
+                        y = y+alignValue;
+                    }
+                }
+                default -> {}
             }
             textBuilder.append("^FW").append(getRevolve(element.getRotation())).append(WIN_LINE_END);
             textBuilder.append("^FO").append(x).append(",").append(y).append("^AA,")
@@ -161,6 +196,7 @@ public class ZplFunc extends AbstractLabelTemplate {
                         .append(fontWidth).append(",").append(fontHight)
                         .append("^FD").append(lineText).append("^FS").append(WIN_LINE_END);
             }
+            //下一行数据处理
             switch (element.getRotation()){
                 default -> {
                     x = element.getX();
@@ -171,12 +207,12 @@ public class ZplFunc extends AbstractLabelTemplate {
                     y = element.getY();
                 }
                 case 180 -> {
-                    x = element.getX();
+                    x = element.getX()-element.getWidth();
                     y = y-fontHight;
                 }
                 case 270 -> {
                     x = x+fontHight;
-                    y = element.getY();
+                    y = element.getY()-element.getWidth();
                 }
             }
         }
@@ -184,7 +220,21 @@ public class ZplFunc extends AbstractLabelTemplate {
     }
 
     private String parseBarCodeElement(BarCodeElement element,String value){
-        String formatStr = "^FW"+getRevolve(element.getRotation())+WIN_LINE_END+"^FO"+element.getX()+","+element.getY();
+        int x = element.getX();
+        int y = element.getY();
+        switch (element.getRotation()){
+            default -> {}
+            case 90 -> {
+                x = x-(element.getHeight()/2);
+            }
+            case 180 -> {
+                x = x-element.getWidth();
+            }
+            case 270 -> {
+                y = y-element.getWidth();
+            }
+        }
+        String formatStr = "^FW"+getRevolve(element.getRotation())+WIN_LINE_END+"^FO"+x+","+y;
         if(element.getBarformat()==BarCodeFormat.ADAPT){
             BarCodeFormat adaptFormate = element.getBarformat().adaptBarType(value);
             element.setBarformat(adaptFormate);
@@ -291,6 +341,6 @@ public class ZplFunc extends AbstractLabelTemplate {
             case 270 -> y = y-height;
         }
         return "~DGGRAPHIC1," + imgHex.length() / 2 + "," + wPrintByte + "," + Tools.zebraCompress(imgHex) + WIN_LINE_END +
-                "^FO" + element.getX() + "," + element.getY() + "^XGGRAPHIC1"+WIN_LINE_END;
+                "^FO" + x + "," + y + "^XGGRAPHIC1"+WIN_LINE_END;
     }
 }

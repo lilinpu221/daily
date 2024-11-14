@@ -167,10 +167,31 @@ public class TscFunc extends AbstractLabelTemplate {
             String lineText = lineList.get(i);
             int alignValue = Tools.textHorizontal(textElement.getWidth(),lineText,tscFont.getWidth()*multi,textElement.getTextAlign());
             switch (textElement.getRotation()){
-                default -> x = x+alignValue;
-                case 180 -> x = x-alignValue;
-                case 90 -> y = y+alignValue;
-                case 270 -> y = y-alignValue;
+                default -> {}
+                case 0 -> {
+                    if(TextAlign.LEFT!=textElement.getTextAlign()) {
+                        //居左x不用变
+                        x = x + alignValue;
+                    }
+                }
+                case 180 ->{
+                    if(TextAlign.LEFT!=textElement.getTextAlign()) {
+                        //居左x不用变
+                        x = x - alignValue;
+                    }
+                }
+                case 90 -> {
+                    if(TextAlign.LEFT!=textElement.getTextAlign()) {
+                        //居左y不用变
+                        y = y+alignValue;
+                    }
+                }
+                case 270 -> {
+                    if(TextAlign.LEFT!=textElement.getTextAlign()) {
+                        //居左y不用变
+                        y = y-alignValue;
+                    }
+                }
             }
             textBuilder.append("TEXT ").append(x).append(",").append(y).append(",").append(getTextStr(tscFont.getName(), textElement.getRotation(),multi))
                     .append(",").append("\"").append(lineText).append("\"").append(WIN_LINE_END);

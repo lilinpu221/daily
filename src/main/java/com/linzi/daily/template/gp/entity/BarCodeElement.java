@@ -78,7 +78,7 @@ public class BarCodeElement extends BaseElement {
         //条码属性
         HashMap<EncodeHintType, Object> hints = new HashMap<>();
         hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
-        hints.put(EncodeHintType.MARGIN, 1);
+        hints.put(EncodeHintType.MARGIN, 0);
         hints.put(EncodeHintType.CODE128_COMPACT, true);
         try {
             //生成条码到内存

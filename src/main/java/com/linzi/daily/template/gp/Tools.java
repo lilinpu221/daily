@@ -100,12 +100,10 @@ public class Tools {
         int alignValue = 0;
         if(textAlign== TextAlign.CENTER){
             //居中，x坐标起始等于余数除以2
-            alignValue = remainWidth/2;
-        }else if (textAlign== TextAlign.RIGHT){
-            //居右，x坐标起始等于余数
-            alignValue=remainWidth;
+            return alignValue = remainWidth/2;
         }
-        return alignValue;
+        //其他空宽都等于文本框宽度-文字长度
+        return remainWidth;
     }
 
     public static BufferedImage compressImage(BufferedImage source,double rotate) {
