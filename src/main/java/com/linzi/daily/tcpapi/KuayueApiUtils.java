@@ -1,7 +1,8 @@
 package com.linzi.daily.tcpapi;
 
 import cn.hutool.crypto.SecureUtil;
-import cn.hutool.json.JSONUtil;
+
+import com.alibaba.fastjson2.JSONObject;
 import com.linzi.daily.utils.OkHttpUtil;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
@@ -29,8 +30,8 @@ public class KuayueApiUtils {
         paramMap.put("devName",deviceName);
         paramMap.put("reqTime",reqTime);
         paramMap.put("securityCode",securityCode);
-        System.out.println(JSONUtil.toJsonStr(paramMap));
-        RequestBody body = RequestBody.create(MediaType.parse("application/json"), JSONUtil.toJsonStr(paramMap));
+        System.out.println(JSONObject.toJSONString(paramMap));
+        RequestBody body = RequestBody.create(MediaType.parse("application/json"), JSONObject.toJSONString(paramMap));
         Response response = OkHttpUtil.formJson(apiUrl+"/adddev",body, Collections.emptyMap());
         System.out.println(response.body().string());
     }
@@ -44,8 +45,8 @@ public class KuayueApiUtils {
         paramMap.put("memberCode",devKey);
         paramMap.put("reqTime",reqTime);
         paramMap.put("securityCode",securityCode);
-        System.out.println(JSONUtil.toJsonStr(paramMap));
-        RequestBody body = RequestBody.create(MediaType.parse("application/json"), JSONUtil.toJsonStr(paramMap));
+        System.out.println(JSONObject.toJSONString(paramMap));
+        RequestBody body = RequestBody.create(MediaType.parse("application/json"), JSONObject.toJSONString(paramMap));
         Response response = OkHttpUtil.formJson(apiUrl+"/deldev",body, Collections.emptyMap());
         System.out.println(response.body().string());
     }
@@ -59,8 +60,8 @@ public class KuayueApiUtils {
         paramMap.put("memberCode",devKey);
         paramMap.put("reqTime",reqTime);
         paramMap.put("securityCode",securityCode);
-        System.out.println(JSONUtil.toJsonStr(paramMap));
-        RequestBody body = RequestBody.create(MediaType.parse("application/json"), JSONUtil.toJsonStr(paramMap));
+        System.out.println(JSONObject.toJSONString(paramMap));
+        RequestBody body = RequestBody.create(MediaType.parse("application/json"), JSONObject.toJSONString(paramMap));
         Response response = OkHttpUtil.formJson(apiUrl+"/deviceInfo",body, Collections.emptyMap());
         System.out.println(response.body().string());
     }
@@ -78,8 +79,8 @@ public class KuayueApiUtils {
         paramMap.put("msgNo", msgNo);
         paramMap.put("reqTime",reqTime);
         paramMap.put("securityCode",securityCode);
-        System.out.println(JSONUtil.toJsonStr(paramMap));
-        RequestBody body = RequestBody.create(MediaType.parse("application/json"), JSONUtil.toJsonStr(paramMap));
+        System.out.println(JSONObject.toJSONString(paramMap));
+        RequestBody body = RequestBody.create(MediaType.parse("application/json"), JSONObject.toJSONString(paramMap));
         Response response = OkHttpUtil.formJson(apiUrl+"/sendMsg",body, Collections.emptyMap());
         System.out.println(response.body().string());
     }
@@ -93,8 +94,8 @@ public class KuayueApiUtils {
         paramMap.put("memberCode",devKey);
         paramMap.put("reqTime",reqTime);
         paramMap.put("securityCode",securityCode);
-        System.out.println(JSONUtil.toJsonStr(paramMap));
-        RequestBody body = RequestBody.create(MediaType.parse("application/json"), JSONUtil.toJsonStr(paramMap));
+        System.out.println(JSONObject.toJSONString(paramMap));
+        RequestBody body = RequestBody.create(MediaType.parse("application/json"), JSONObject.toJSONString(paramMap));
         Response response = OkHttpUtil.formJson(apiUrl+"/cancelPrint",body, Collections.emptyMap());
         System.out.println(response.body().string());
     }
@@ -108,8 +109,8 @@ public class KuayueApiUtils {
         paramMap.put("memberCode",devKey);
         paramMap.put("reqTime",reqTime);
         paramMap.put("securityCode",securityCode);
-        System.out.println(JSONUtil.toJsonStr(paramMap));
-        RequestBody body = RequestBody.create(MediaType.parse("application/json"), JSONUtil.toJsonStr(paramMap));
+        System.out.println(JSONObject.toJSONString(paramMap));
+        RequestBody body = RequestBody.create(MediaType.parse("application/json"), JSONObject.toJSONString(paramMap));
         Response response = OkHttpUtil.formJson(apiUrl+"/reboot",body, Collections.emptyMap());
         System.out.println(response.body().string());
     }
@@ -123,8 +124,8 @@ public class KuayueApiUtils {
         paramMap.put("memberCode",devKey);
         paramMap.put("reqTime",reqTime);
         paramMap.put("securityCode",securityCode);
-        System.out.println(JSONUtil.toJsonStr(paramMap));
-        RequestBody body = RequestBody.create(MediaType.parse("application/json"), JSONUtil.toJsonStr(paramMap));
+        System.out.println(JSONObject.toJSONString(paramMap));
+        RequestBody body = RequestBody.create(MediaType.parse("application/json"), JSONObject.toJSONString(paramMap));
         Response response = OkHttpUtil.formJson(apiUrl+"/realtimeStatus",body, Collections.emptyMap());
         System.out.println(response.body().string());
     }

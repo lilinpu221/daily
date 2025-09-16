@@ -1,6 +1,7 @@
 package com.linzi.daily.ocr.service;
 
-import cn.hutool.json.JSONObject;
+
+import com.alibaba.fastjson2.JSONObject;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -64,6 +65,6 @@ public class TsplServiceImpl implements TsplService{
     }
 
     private String getValue(JSONObject jsonObj,String key){
-        return jsonObj.getJSONObject(key)==null?"":jsonObj.getJSONObject(key).getStr("rec_txt");
+        return jsonObj.getJSONObject(key)==null?"":jsonObj.getJSONObject(key).getString("rec_txt");
     }
 }

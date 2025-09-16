@@ -11,9 +11,13 @@ import com.linzi.daily.template.gp.enums.Element;
 import com.linzi.daily.template.gp.enums.FontFamily;
 import lombok.Getter;
 import lombok.Setter;
+
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.font.TextAttribute;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.text.AttributedString;
 import java.util.HashMap;
 
@@ -120,6 +124,12 @@ public class BarCodeElement extends BaseElement {
         //条码添加到画布
         resultG2d.drawImage(barcodeImage, 0, barCodeY, barcodeImage.getWidth(null), barcodeImage.getHeight(null), Color.WHITE, null);
         resultG2d.dispose();
-        return Tools.compressImage(resultImage,getRotation());
+        BufferedImage finalImage = Tools.compressImage(resultImage,getRotation());
+        try {
+            ImageIO.write(finalImage,"jpg",new File("E:\\1.jpg"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return finalImage;
     }
 }

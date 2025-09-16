@@ -1,6 +1,6 @@
 package com.linzi.daily.template.jd.text;
 
-import cn.hutool.json.JSONUtil;
+import com.alibaba.fastjson2.JSONObject;
 import com.linzi.daily.template.jd.BaseItem;
 import com.linzi.daily.template.jd.Tool;
 import lombok.Data;
@@ -169,7 +169,7 @@ public class TextItem extends BaseItem {
 
     public static void main(String[] args) {
         String json = "{\"type\":\"text\",\"top\":11,\"left\":238,\"width\":240,\"height\":48,\"lineHeight\":20,\"fontName\":\"Arial\",\"fontSize\":24,\"fontWeight\":\"bold\",\"alignItem\":\"center\",\"justifyContent\":\"center\",\"content\":\"阿达撒发<发搭>嘎割发代首啊大哥12发的给对方官方dga电饭锅-四方根深蒂固34##电费广东省森岛帆高水电费感受到f\",\"border\":\"none\",\"whiteSpace\":\"compress-wrap\"}";
-        TextItem textItem = JSONUtil.toBean(json,TextItem.class);
+        TextItem textItem = JSONObject.parseObject(json,TextItem.class);
         System.out.println(textItem.builderTspl());
     }
 }

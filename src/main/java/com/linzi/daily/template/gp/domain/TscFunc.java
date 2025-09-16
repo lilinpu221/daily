@@ -8,9 +8,7 @@ import com.linzi.daily.template.gp.entity.*;
 import com.linzi.daily.template.gp.enums.*;
 import net.coobird.thumbnailator.Thumbnails;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.Charset;

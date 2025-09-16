@@ -5,8 +5,8 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.crypto.SmUtil;
-import cn.hutool.json.JSONArray;
-import cn.hutool.json.JSONUtil;
+import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONObject;
 import com.linzi.daily.utils.OkHttpUtil;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
@@ -26,7 +26,7 @@ public class GwIotUtils {
 
     public static void main(String[] args) throws IOException {
         JSONArray iccids = new JSONArray();
-        iccids.put("89860624650055099583");
+        iccids.add("89860624650055099583");
         System.out.println(GwIotUtils.simDetails(iccids));
         //2-已激活 3-已停机 4-已失效 5-已清除
         //System.out.println(GwIotUtils.simOpenClose("89860624650055099583",3));
@@ -39,8 +39,8 @@ public class GwIotUtils {
         paramMap.put("version",VERSION);
         paramMap.put("iccids",iccids);
         Map<String,Object> headMap = buildParam(paramMap);
-        System.out.println(">>>>>"+JSONUtil.toJsonStr(headMap));
-        RequestBody body = RequestBody.create(MediaType.parse("application/json"), JSONUtil.toJsonStr(headMap));
+        System.out.println(">>>>>"+ JSONObject.toJSONString(headMap));
+        RequestBody body = RequestBody.create(MediaType.parse("application/json"), JSONObject.toJSONString(headMap));
         return Objects.requireNonNull(OkHttpUtil.formJson(BASE_URL + "/wsGetTerminalDetails/V1/1Main/vV1.1",
                 body, Collections.emptyMap()).body()).string();
     }
@@ -55,8 +55,8 @@ public class GwIotUtils {
         paramMap.put("changeType","3");
         paramMap.put("targetValue",type);
         Map<String,Object> headMap = buildParam(paramMap);
-        System.out.println(">>>>>"+JSONUtil.toJsonStr(headMap));
-        RequestBody body = RequestBody.create(MediaType.parse("application/json"), JSONUtil.toJsonStr(headMap));
+        System.out.println(">>>>>"+JSONObject.toJSONString(headMap));
+        RequestBody body = RequestBody.create(MediaType.parse("application/json"), JSONObject.toJSONString(headMap));
         return Objects.requireNonNull(OkHttpUtil.formJson(BASE_URL + "/wsGetInvoice/V1/1Main/vV1.1",
                 body, Collections.emptyMap()).body()).string();
     }

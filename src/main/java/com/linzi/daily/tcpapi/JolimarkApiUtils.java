@@ -1,11 +1,9 @@
 package com.linzi.daily.tcpapi;
 
-import cn.hutool.core.codec.Base64;
-import cn.hutool.core.util.HexUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.crypto.SecureUtil;
-import cn.hutool.json.JSONObject;
-import cn.hutool.json.JSONUtil;
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
 import com.linzi.daily.utils.OkHttpUtil;
 import okhttp3.FormBody;
 
@@ -37,7 +35,7 @@ public class JolimarkApiUtils {
         param.deleteCharAt(param.length()-1);
         String resp = OkHttpUtil.asyncGet(url, param.toString()).body().string();
         JSONObject respJson = parseResp(resp);
-        return respJson.getStr("access_token");
+        return respJson.getString("access_token");
     }
 
     public String escPrinter(String hexEsc,int paperWidth,int paperType,int billType) throws IOException {
@@ -57,7 +55,7 @@ public class JolimarkApiUtils {
         });
         String resp = OkHttpUtil.formPost(url, formBody.build()).body().string();
         JSONObject respJson = parseResp(resp);
-        return respJson.getStr("data");
+        return respJson.getString("data");
     }
 
     public String tscPrinter(String tscContent,int paperType) throws IOException {
@@ -75,7 +73,7 @@ public class JolimarkApiUtils {
         });
         String resp = OkHttpUtil.formPost(url, formBody.build()).body().string();
         JSONObject respJson = parseResp(resp);
-        return respJson.getStr("data");
+        return respJson.getString("data");
     }
 
     public String playVoice(String voice) throws IOException {
@@ -92,7 +90,7 @@ public class JolimarkApiUtils {
         });
         String resp = OkHttpUtil.formPost(url, formBody.build()).body().string();
         JSONObject respJson = parseResp(resp);
-        return respJson.getStr("data");
+        return respJson.getString("data");
     }
 
     private String getSign(Map<String,Object> paramMap){
@@ -106,15 +104,15 @@ public class JolimarkApiUtils {
     }
 
     private JSONObject parseResp(String resp){
-        JSONObject respJson = JSONUtil.parseObj(resp);
-        if(respJson.getInt("return_code")!=0){
-            throw new RuntimeException("映美接口调用失败："+respJson.getStr("return_msg"));
+        JSONObject respJson = JSONObject.parseObject(resp);
+        if(respJson.getIntValue("return_code")!=0){
+            throw new RuntimeException("映美接口调用失败："+respJson.getString("return_msg"));
         }
-        if(JSONUtil.isTypeJSON(respJson.getStr("return_data"))){
+        if(JSON.isValidObject(respJson.getString("return_data"))){
             return respJson.getJSONObject("return_data");
         }else{
             JSONObject data = new JSONObject();
-            data.putOpt("data",respJson.getStr("return_data"));
+            data.put("data",respJson.getString("return_data"));
             return data;
         }
     }

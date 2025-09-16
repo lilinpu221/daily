@@ -1,6 +1,7 @@
 package com.linzi.daily.ocr.service;
 
-import cn.hutool.json.JSONObject;
+
+import com.alibaba.fastjson2.JSONObject;
 
 public interface TsplService {
 

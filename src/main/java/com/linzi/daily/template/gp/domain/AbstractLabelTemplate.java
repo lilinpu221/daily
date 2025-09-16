@@ -1,14 +1,8 @@
 package com.linzi.daily.template.gp.domain;
 
-import cn.hutool.json.JSONArray;
-import cn.hutool.json.JSONObject;
-import cn.hutool.json.JSONUtil;
+import com.alibaba.fastjson2.JSONObject;
 import com.linzi.daily.template.gp.entity.*;
-import com.linzi.daily.template.gp.enums.Element;
 import lombok.Getter;
-
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -34,7 +28,7 @@ public abstract class AbstractLabelTemplate {
         List<BaseElement> dynamicList =  layout.getLayer().stream().filter(BaseElement::getIsField).toList();
         for(BaseElement element:dynamicList){
             if(dataJson.containsKey(element.getFieldName())){
-                element.setValue(dataJson.getStr(element.getFieldName()));
+                element.setValue(dataJson.getString(element.getFieldName()));
             }
         }
     }

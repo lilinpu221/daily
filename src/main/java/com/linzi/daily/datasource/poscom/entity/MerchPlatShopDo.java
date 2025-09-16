@@ -1,11 +1,11 @@
 package com.linzi.daily.datasource.poscom.entity;
-
-import cn.hutool.json.JSONArray;
-import cn.hutool.json.JSONObject;
+import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.extension.handlers.Fastjson2TypeHandler;
 import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import lombok.Data;
 
@@ -35,12 +35,12 @@ public class MerchPlatShopDo implements Serializable {
     private Date createTime;
 
     private Date updateTime;
-    @TableField(typeHandler = JacksonTypeHandler.class)
+    @TableField(typeHandler = Fastjson2TypeHandler.class)
     private JSONArray deviceCodes;
 
     private String autoConfirm;
 
-    @TableField(typeHandler = JacksonTypeHandler.class)
+    @TableField(typeHandler = Fastjson2TypeHandler.class)
     private JSONObject welcome;
 
     private Date expireTime;

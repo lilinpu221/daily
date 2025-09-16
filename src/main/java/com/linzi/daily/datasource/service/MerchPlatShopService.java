@@ -1,14 +1,12 @@
 package com.linzi.daily.datasource.service;
 
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.json.JSONArray;
-import cn.hutool.json.JSONObject;
+import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONObject;
 import com.linzi.daily.datasource.poscom.dao.MerchPlatShopDao;
 import com.linzi.daily.datasource.poscom.entity.MerchPlatShopDo;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
-
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -26,7 +24,7 @@ public class MerchPlatShopService {
             JSONArray deviceCodes = merchPlatShopDo.getDeviceCodes();
             deviceCodes.forEach(deviceCode -> {
                 JSONObject deviceCodeObj = (JSONObject) deviceCode;
-                deviceCodeObj.putOpt("expireTime", DateUtil.now());
+                deviceCodeObj.put("expireTime", DateUtil.now());
             });
             merchPlatShopDo.setDeviceCodes(deviceCodes);
         }).toList();

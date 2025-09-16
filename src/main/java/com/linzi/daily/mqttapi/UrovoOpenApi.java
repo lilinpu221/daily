@@ -1,14 +1,10 @@
 package com.linzi.daily.mqttapi;
 
 import cn.hutool.crypto.SecureUtil;
-import cn.hutool.json.JSONObject;
-import cn.hutool.json.JSONUtil;
+import com.alibaba.fastjson2.JSONObject;
 import okhttp3.*;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -101,7 +97,7 @@ public class UrovoOpenApi {
         paramMap.put("appKey",APP_KEY);
         paramMap.put("command",command);
         paramMap.put("timestamp",System.currentTimeMillis());
-        paramMap.put("params", JSONUtil.toJsonStr(bodyMap));
+        paramMap.put("params", com.alibaba.fastjson2.JSON.toJSONString(bodyMap));
 
         StringBuilder signSb = new StringBuilder(APP_SECRET);
         paramMap.forEach((k,v)->{
@@ -165,8 +161,8 @@ public class UrovoOpenApi {
         String productCode = "8lfT8tBv";
         String deviceCode = "vKca3f23kPXKcxtG";
         String identifier = "payurl";
-        JSONObject command = JSONUtil.createObj()
-                .set("url", ("http://merchant=test_version&deviceCode=1502242640000&amt=2.00"));
+        JSONObject command = new JSONObject();
+        command.put("url", ("http://merchant=test_version&deviceCode=1502242640000&amt=2.00"));
         System.out.println(command.toString());
         System.out.println(UrovoOpenApi.invokeService(productCode, deviceCode, identifier, command));
     }

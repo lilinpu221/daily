@@ -1,7 +1,7 @@
 package com.linzi.daily.ocr.paddle;
 
-import cn.hutool.json.JSONObject;
-import cn.hutool.json.JSONUtil;
+
+import com.alibaba.fastjson2.JSONObject;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import javax.imageio.ImageIO;
@@ -23,8 +23,8 @@ public class PaddleOcrServiceImpl implements PaddleOcrService{
         String ocrResult = rapidOcrClient.ocr(localFile);
         System.out.println("======"+ocrResult);
         StringBuilder textBuilder = new StringBuilder();
-        for(Map.Entry<String,Object> entity: new JSONObject(ocrResult).entrySet()){
-            String text = JSONUtil.parseObj(entity.getValue()).getStr("rec_txt")+"\n";
+        for(Map.Entry<String,Object> entity: JSONObject.parseObject(ocrResult).entrySet()){
+            String text = JSONObject.parseObject(String.valueOf(entity.getValue())).getString("rec_txt")+"\n";
             textBuilder.append(text);
         }
         localFile.deleteOnExit();
@@ -37,6 +37,6 @@ public class PaddleOcrServiceImpl implements PaddleOcrService{
         ImageIO.write(image,"png",localFile);
         String ocrResult = rapidOcrClient.ocr(localFile);
         System.out.println("======"+ocrResult);
-        return JSONUtil.parseObj(ocrResult);
+        return JSONObject.parseObject(ocrResult);
     }
 }

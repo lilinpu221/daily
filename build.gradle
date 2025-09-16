@@ -1,7 +1,7 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.3.1'
-	id 'io.spring.dependency-management' version '1.1.5'
+	id 'org.springframework.boot' version '3.5.5'
+	id 'io.spring.dependency-management' version '1.1.7'
 }
 
 group = 'com.linzi'
@@ -34,22 +34,40 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-	implementation group: 'cn.hutool', name: 'hutool-crypto', version: '5.8.28'
-	implementation group: 'cn.hutool', name: 'hutool-json', version: '5.8.28'
+	implementation group: 'cn.hutool', name: 'hutool-crypto', version: '5.8.38'
+	implementation group: 'cn.hutool', name: 'hutool-http', version: '5.8.38'
 	implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.12.0'
-	implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.14.0'
-	implementation group: 'net.sourceforge.tess4j', name: 'tess4j', version: '5.12.0'
+	implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.18.0'
+	implementation group: 'net.sourceforge.tess4j', name: 'tess4j', version: '5.16.0'
 	implementation group: 'com.github.xiaoymin', name: 'knife4j-openapi3-jakarta-spring-boot-starter', version: '4.5.0'
-	implementation group: 'cn.dev33', name: 'sa-token-spring-boot3-starter', version: '1.38.0'
+	implementation group: 'cn.dev33', name: 'sa-token-spring-boot3-starter', version: '1.44.0'
 	implementation group: 'org.bouncycastle', name: 'bcprov-jdk18on', version: '1.78.1'
+	implementation group: 'com.mysql', name: 'mysql-connector-j', version: '8.3.0'
+	implementation group: 'com.baomidou', name: 'mybatis-plus-spring-boot3-starter', version: '3.5.12'
+	implementation group: 'com.alibaba', name: 'druid-spring-boot-3-starter', version: '1.2.27'
+	implementation group: 'com.alibaba', name: 'fastjson', version: '1.2.83'
+	implementation group: 'com.alibaba.fastjson2', name: 'fastjson2', version: '2.0.58'
+	implementation group: 'org.jsoup', name: 'jsoup', version: '1.20.1'
+	//implementation group: 'org.springframework.ai', name: 'spring-ai-starter-mcp-server', version: '1.0.0-M8'
+	implementation group: 'org.springframework.ai', name: 'spring-ai-starter-mcp-client', version: '1.0.0-M8'
+	//Tesseract OCR依赖：核心识别引擎
+	implementation group: 'org.bytedeco', name: 'tesseract-platform', version: '5.5.1-1.5.12'
+	//Leptonica依赖：Tesseract的图像处理依赖库
+	implementation group: 'org.bytedeco', name: 'leptonica-platform', version: '1.85.0-1.5.12'
+	//Zxing依赖：二维码识别引擎
 	implementation group: 'net.coobird',name:'thumbnailator',version: '0.4.20'
 	implementation group: 'com.google.zxing', name: 'core', version: '3.5.3'
 	implementation group: 'com.google.zxing', name: 'javase', version: '3.5.3'
-	implementation group: 'com.mysql', name: 'mysql-connector-j', version: '8.3.0'
-	implementation group: 'com.baomidou', name: 'mybatis-plus-spring-boot3-starter', version: '3.5.7'
-	implementation group: 'com.alibaba', name: 'druid-spring-boot-3-starter', version: '1.2.23'
-	implementation group: 'com.alibaba', name: 'fastjson', version: '1.2.83'
-	implementation group: 'com.alibaba.fastjson2', name: 'fastjson2', version: '2.0.53'
+	//openCv：图像处理
+	implementation group: 'cn.poscom', name: 'opencv-java', version: '4.11.0'
+//	implementation group: 'org.bytedeco', name: 'opencv-platform', version: '4.11.0-1.5.12'
+//	implementation group: 'org.bytedeco', name: 'openblas-platform', version: '0.3.30-1.5.12'
+//	implementation group: 'org.bytedeco', name: 'javacpp-platform', version: '1.5.12'
+	//implementation group: 'org.bytedeco', name: 'opencv', version: '4.11.0-1.5.12'
+	//implementation group: 'org.bytedeco', name: 'javacpp', version: '1.5.12'
+	//implementation group: 'org.bytedeco', name: 'openblas', version: '0.3.30-1.5.12'
+	//implementation group: 'org.bytedeco', name: 'javacv', version: '1.5.12'
+
 }
 
 tasks.named('test') {

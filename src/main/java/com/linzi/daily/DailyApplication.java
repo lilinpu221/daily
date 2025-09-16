@@ -14,11 +14,7 @@ import java.awt.*;
 public class DailyApplication {
 
 	public static void main(String[] args) {
-		String[] fonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
-		log.info("===========支持的字体列表===========");
-		for(String font:fonts){
-			log.info(font);
-		}
+		//String[] fonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
 		SpringApplication.run(DailyApplication.class, args);
 	}
 

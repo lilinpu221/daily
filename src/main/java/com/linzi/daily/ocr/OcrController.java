@@ -1,6 +1,7 @@
 package com.linzi.daily.ocr;
 
-import cn.hutool.json.JSONObject;
+
+import com.alibaba.fastjson2.JSONObject;
 import com.linzi.daily.ocr.paddle.PaddleOcrService;
 import com.linzi.daily.ocr.tess4j.Tess4jOcrService;
 import com.linzi.daily.ocr.service.TsplService;
