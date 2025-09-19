@@ -21,7 +21,7 @@ public class OpenCVDetector {
 
     public static void main(String[] args) {
         OpenCVDetector detector = new OpenCVDetector();
-        List<BaseResult> results = detector.process("F:\\C200I.png");
+        List<BaseResult> results = detector.process("D:\\work\\C200I.png");
         for (BaseResult result : results){
             System.out.println(result);
         }
@@ -51,8 +51,8 @@ public class OpenCVDetector {
                 if (rect.width < 20 || rect.height < 20) {
                     continue;
                 }
-                Mat preciseRegion = extractPreciseRegion(grayImage, region, rect);
-                BufferedImage bufferedImage = matToBufferedImage(preciseRegion);
+                Mat rectMat = new Mat(grayImage, rect);
+                BufferedImage bufferedImage = matToBufferedImage(rectMat);
                 LuminanceSource source = new BufferedImageLuminanceSource(bufferedImage);
                 BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
 
@@ -61,7 +61,7 @@ public class OpenCVDetector {
                     results.add(baseResult);
                 }
                 // 释放临时Mat对象
-                preciseRegion.release();
+                rectMat.release();
             }
         } finally {
             // 确保资源被释放
@@ -123,7 +123,6 @@ public class OpenCVDetector {
         Map<DecodeHintType, Object> hints = new EnumMap<>(DecodeHintType.class);
         hints.put(DecodeHintType.TRY_HARDER, Boolean.TRUE);
         hints.put(DecodeHintType.CHARACTER_SET, "UTF-8");
-        hints.put(DecodeHintType.PURE_BARCODE, Boolean.TRUE);
         try {
             Result result = qrCodeReader.decode(bitmap, hints);
             if(CharSequenceUtil.isNotBlank(result.getText())){

@@ -20,14 +20,14 @@ public class ContourDetector {
 
     public static void main(String[] args) {
         // 读取图像
-        Mat image = Imgcodecs.imread("F:\\C200I.png");
+        Mat image = Imgcodecs.imread("D:\\work\\orc\\C200I.png");
         if (image.empty()) {
             System.out.println("无法加载图像文件");
             return;
         }
         // 检测条码区域
         Mat processedImage = detectRegion(image, new Size(27, 4),new Scalar(0, 0, 255));
-        Imgcodecs.imwrite("F:\\M220_BOX_covert.png", processedImage);
+        //Imgcodecs.imwrite("F:\\M220_BOX_covert.png", processedImage);
     }
 
     /**
@@ -71,7 +71,7 @@ public class ContourDetector {
             System.out.println( rect);
             // 从原始图像中提取区域
             Mat region = new Mat(image, rect);
-            Imgcodecs.imwrite("F:\\" + UUID.randomUUID() + ".png", region);
+            Imgcodecs.imwrite("D:\\work\\orc\\" + UUID.randomUUID() + ".png", region);
 //            Imgproc.rectangle(
 //                    processedImage,
 //                    new Point(rect.x, rect.y),
@@ -79,6 +79,7 @@ public class ContourDetector {
 //                    bordeColor,
 //                    1
 //            );
+            region.release();
         }
         return processedImage;
     }
